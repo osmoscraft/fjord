@@ -16,11 +16,13 @@
   },
   "type": "module",
   "devDependencies": {
-    "@types/chrome": "^0.0.231",
     "@types/node": "^20.2.5",
+    "@types/webextension-polyfill": "^0.10.2",
     "concurrently": "^8.0.1",
     "esbuild": "^0.19.2",
     "tsx": "^3.12.7"
   },
-  "dependencies": {}
+  "dependencies": {
+    "webextension-polyfill": "^0.10.0"
+  }
 }
