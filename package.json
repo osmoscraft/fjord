@@ -1,0 +1,30 @@
+{
+  "name": "root",
+  "version": "0.0.0",
+  "private": true,
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm run dev -w apps/browser-extension",
+    "build": "npm run build -w apps/browser-extension",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chuanqisun/marathon.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chuanqisun/marathon/issues"
+  },
+  "homepage": "https://github.com/chuanqisun/marathon#readme",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "prettier": "^2.8.4"
+  }
+}
