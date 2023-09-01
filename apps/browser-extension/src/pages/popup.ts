@@ -7,7 +7,7 @@ import "./popup.css";
     if (action === "start-vm") {
       console.log("will start vm");
       await browser.tabs.update({
-        url: "",
+        url: "https://bing.com",
       });
       console.log("navigated to new page");
 
@@ -35,6 +35,10 @@ import "./popup.css";
       });
 
       console.log("button clicked");
+    }
+
+    if (action === "start-vm-background") {
+      browser.runtime.sendMessage({ action: "start-vm-background" });
     }
   });
 })();
