@@ -1,6 +1,6 @@
 ### Make git client easier to use
 
-echo Apply Git defaults for marathon repo...
+echo Apply Git defaults for the repo...
 
 # Start echo commands
 set -x;

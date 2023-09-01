@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chuanqisun/marathon.git"
+    "url": "git+https://github.com/chuanqisun/impromptu.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/chuanqisun/marathon/issues"
+    "url": "https://github.com/chuanqisun/impromptu/issues"
   },
-  "homepage": "https://github.com/chuanqisun/marathon#readme",
+  "homepage": "https://github.com/chuanqisun/impromptu#readme",
   "workspaces": [
     "apps/*",
     "packages/*"

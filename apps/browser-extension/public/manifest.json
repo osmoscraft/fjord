@@ -1,10 +1,9 @@
 {
-  "name": "Marathon",
+  "name": "Impromptu",
   "description": "Run tasks in browser",
   "version": "0.0.1",
   "manifest_version": 3,
   "action": {
-    "default_title": "Open Marathon",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "/images/icon@16.png",
