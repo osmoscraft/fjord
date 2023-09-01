@@ -15,7 +15,7 @@ import "./popup.css";
         const injectionResult = await browser.scripting.executeScript({
           target: { tabId: await getActiveTabId() },
           func: () => {
-            const button = document.querySelector(`[title="Start"][role="button"]`);
+            const button = document.querySelector(`[title="Start"][role="button"][aria-disabled="false"]`);
             return !!button;
           },
         });
@@ -29,7 +29,7 @@ import "./popup.css";
       await browser.scripting.executeScript({
         target: { tabId: await getActiveTabId() },
         func: () => {
-          const button = document.querySelector(`[title="Start"][role="button"]`);
+          const button = document.querySelector(`[title="Start"][role="button"][aria-disabled="false"]`);
           (button as HTMLElement).click();
         },
       });
