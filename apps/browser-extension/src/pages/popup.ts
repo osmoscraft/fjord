@@ -1,9 +1,15 @@
 import browser from "webextension-polyfill";
+import { ensureBackgroundPage } from "../modules/bootstrap/ensure-background-page";
 import "./popup.css";
 
 (async () => {
   document.body.addEventListener("click", async (e) => {
     const action = (e.target as HTMLElement)?.closest("[data-action]")?.getAttribute("data-action");
+    if (action === "sync") {
+      await ensureBackgroundPage();
+      browser.runtime.sendMessage({ syncAll: true });
+    }
+
     if (action === "start-vm") {
       console.log("will start vm");
       await browser.tabs.update({

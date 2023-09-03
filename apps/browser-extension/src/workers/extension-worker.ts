@@ -1,4 +1,11 @@
 import browser from "webextension-polyfill";
+import { ensureBackgroundPage } from "../modules/bootstrap/ensure-background-page";
+
+const preference = { runOnStartUp: false };
+if (preference.runOnStartUp) {
+  browser.runtime.onInstalled.addListener(ensureBackgroundPage);
+  browser.runtime.onStartup.addListener(ensureBackgroundPage);
+}
 
 browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   console.log(sender.tab ? "from a content script:" + sender.tab.url : "from the extension");
