@@ -1,3 +1,3 @@
-# Impromptu
+# Fjord
 
-Run tasks in browser
+Mirror feed into bookmarks
