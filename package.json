@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chuanqisun/impromptu.git"
+    "url": "git+https://github.com/osmoscraft/fjord.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/chuanqisun/impromptu/issues"
+    "url": "https://github.com/osmoscraft/fjord/issues"
   },
-  "homepage": "https://github.com/chuanqisun/impromptu#readme",
+  "homepage": "https://github.com/osmoscraft/fjord#readme",
   "workspaces": [
     "apps/*",
     "packages/*"

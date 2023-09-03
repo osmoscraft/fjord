@@ -1,6 +1,6 @@
 {
-  "name": "Impromptu",
-  "description": "Run tasks in browser",
+  "name": "Fjord",
+  "description": "Mirror feed into bookmarks",
   "version": "0.0.1",
   "manifest_version": 3,
   "action": {

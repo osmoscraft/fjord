@@ -15,3 +15,4 @@
 - Config sources in a single file (yaml, opml, json, xml)
 - Use one of the bookmarks as source of feeds
 - Use external URL as source of feeds
+- Add current page to feed

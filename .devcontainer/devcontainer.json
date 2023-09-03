@@ -1,5 +1,5 @@
 {
-  "name": "Impromptu Dev Container",
+  "name": "Fjord Dev Container",
   "build": {
     "dockerfile": "Dockerfile"
   },

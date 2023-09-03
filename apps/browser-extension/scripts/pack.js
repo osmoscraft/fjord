@@ -16,7 +16,7 @@ async function pack(dir) {
   console.log("[pack] extension dir", path.resolve(dir));
   const manifest = await readJson(path.resolve(dir, "manifest.json"));
   const version = manifest.version;
-  const outFilename = `impromptu-${version}.chrome.zip`;
+  const outFilename = `fjord-${version}.chrome.zip`;
 
   await execAsync(`zip -r ../${outFilename} .`, { cwd: dir });
 
