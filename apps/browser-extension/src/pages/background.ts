@@ -1,11 +1,17 @@
 import browser from "webextension-polyfill";
+import { parseXmlFeed } from "../modules/feed-parser/parse";
 
 browser.runtime.onMessage.addListener((message) => {
   if (message.syncAll) {
     testFeedUrls.map((url) =>
       fetch(url)
         .then((res) => res.text())
-        .then(console.log)
+        .then(parseXmlFeed)
+        .then((feed) => {
+          browser.runtime.sendMessage({
+            feed,
+          });
+        })
     );
   }
 });

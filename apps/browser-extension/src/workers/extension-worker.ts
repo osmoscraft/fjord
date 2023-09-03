@@ -1,70 +1,28 @@
 import browser from "webextension-polyfill";
-import { ensureBackgroundPage } from "../modules/bootstrap/ensure-background-page";
+import { backgroundPageParameters } from "../modules/background/parameters";
+import { setupOffscreenDocument } from "../modules/extension/offscreen";
+import type { Feed } from "../modules/feed-parser/types";
 
 const preference = { runOnStartUp: false };
+
 if (preference.runOnStartUp) {
-  browser.runtime.onInstalled.addListener(ensureBackgroundPage);
-  browser.runtime.onStartup.addListener(ensureBackgroundPage);
+  browser.runtime.onInstalled.addListener(() => setupOffscreenDocument(backgroundPageParameters));
+  browser.runtime.onStartup.addListener(() => setupOffscreenDocument(backgroundPageParameters));
 }
 
-browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  console.log(sender.tab ? "from a content script:" + sender.tab.url : "from the extension");
+browser.runtime.onMessage.addListener(async (message) => {
+  if (message.feed) {
+    const feed = message.feed as Feed;
+    console.log("parsed", feed);
+    const rootFolder = await browser.bookmarks.create({ title: "Fjord", parentId: "1", index: 0 }); // HACK: 1 is the "Favorites bar"
+    console.log(rootFolder);
 
-  if (message.action === "start-vm-background") {
-    console.log("will start VM from background script");
-    await browser.tabs.create({
-      url: "https://bing.com",
-    });
-    console.log("navigated to new page");
+    const feedFolder = await browser.bookmarks.create({ title: feed.title, parentId: rootFolder.id });
 
-    await waitUntil(async () => {
-      const currentTab = await getCurrentTab();
-      const injectionResult = await browser.scripting.executeScript({
-        target: { tabId: currentTab.id! }, // safe?
-        func: () => {
-          const button = document.querySelector(`[title="Start"][role="button"][aria-disabled="false"]`);
-          return !!button;
-        },
-      });
-
-      const isFound = !!injectionResult.at(0)?.result;
-      console.log("isButtonFound?", isFound);
-
-      return isFound;
-    });
-
-    const currentTab = await getCurrentTab();
-    await browser.scripting.executeScript({
-      target: { tabId: currentTab.id! }, // safe?
-      func: () => {
-        const button = document.querySelector(`[title="Start"][role="button"][aria-disabled="false"]`);
-        (button as HTMLElement).click();
-      },
-    });
+    Promise.all(
+      feed.items
+        .slice(0, 10)
+        .map((item, index) => browser.bookmarks.create({ title: item.title, url: item.url, parentId: feedFolder.id }))
+    );
   }
 });
-
-// ref: https://developer.chrome.com/docs/extensions/reference/tabs/#get-the-current-tab
-async function getCurrentTab() {
-  let queryOptions = { active: true, lastFocusedWindow: true };
-  // `tab` will either be a `tabs.Tab` instance or `undefined`.
-  let [tab] = await browser.tabs.query(queryOptions);
-  return tab;
-}
-
-async function waitUntil(check: () => boolean | Promise<boolean>) {
-  // check condition every second until timeout or it becomes true
-  return new Promise<void>((resolve, reject) => {
-    const poll = setInterval(async () => {
-      if (await check()) {
-        clearInterval(poll);
-        resolve();
-      }
-    }, 1000);
-
-    setTimeout(() => {
-      clearInterval(poll);
-      reject(new Error("timeout"));
-    }, 10000);
-  });
-}
