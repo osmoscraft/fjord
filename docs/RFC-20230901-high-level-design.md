@@ -21,3 +21,5 @@
   - Remote first: Use remote OPML/YAML url. User must manually edit remote to propagate changes
 - Use external URL as source of feeds
 - Add current page to feed
+- UI can detect and add current site as RSS source
+- UI can toggle page between "unread/read"
