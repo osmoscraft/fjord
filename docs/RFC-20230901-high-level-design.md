@@ -9,7 +9,8 @@
 - Background page can update feeds on browser start
 - User can perform on-demand sync
 - Merge with existing bookmarks, with limit on total count
-- Read receipt tracking with microcopy (e.g. "\*" prefix for unread articles)
+- Per-article read receipt tracking with microcopy (e.g. "(\*)" prefix for unread articles)
+- Per-folder unread count with (N) Folder name
 - Customize folder name per feed
 - Customize retention policy per feed
 - Config sources in a single file (yaml, opml, json, xml)
