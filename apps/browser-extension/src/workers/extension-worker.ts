@@ -10,7 +10,6 @@ if (preference.runOnStartUp) {
   browser.runtime.onStartup.addListener(() => setupOffscreenDocument(backgroundPageParameters));
 }
 
-// update status on read
 browser.tabs.onUpdated.addListener(async (id, info) => {
   if (!info.url) return;
 
@@ -30,7 +29,7 @@ browser.tabs.onUpdated.addListener(async (id, info) => {
       });
     }
 
-    const parentChannel = channels.find((channel) => channel.id === matchedItems[0].parentId);
+    const parentChannel = channels.find((channel) => channel.id === matchedItems[0]?.parentId);
     if (!parentChannel) return;
 
     const channelItems = (await browser.bookmarks.getSubTree(parentChannel.id))[0]?.children ?? [];
@@ -46,15 +45,6 @@ browser.tabs.onUpdated.addListener(async (id, info) => {
 
 // merge bookmarks
 browser.runtime.onMessage.addListener(async (message: MessageToExtensionWorker) => {
-  if (message.willFetchAllFeeds) {
-    // ensure root folder exists
-    const existingRootFolder = await browser.bookmarks.search({
-      title: "Fjord",
-    });
-
-    console.log("search", existingRootFolder);
-  }
-
   if (message.didFetchFeed) {
     // TODO implement declarative merge: compute latest value, then resolve difference
 
@@ -101,6 +91,9 @@ browser.runtime.onMessage.addListener(async (message: MessageToExtensionWorker) 
     }, 0);
 
     browser.bookmarks.update(channelFolder.id, { title: newCount ? `(${newCount}) ${feed.title}` : feed.title });
+  }
+
+  if (message.didFetchAllFeeds) {
   }
 });
 
