@@ -1,6 +1,7 @@
 import browser from "webextension-polyfill";
 import { backgroundPageParameters } from "../modules/background/parameters";
 import { setupOffscreenDocument } from "../modules/extension/offscreen";
+import type { MessageToBackground } from "../typings/events";
 import "./popup.css";
 
 (async () => {
@@ -8,7 +9,7 @@ import "./popup.css";
     const action = (e.target as HTMLElement)?.closest("[data-action]")?.getAttribute("data-action");
     if (action === "sync") {
       await setupOffscreenDocument(backgroundPageParameters);
-      browser.runtime.sendMessage({ syncAll: true });
+      browser.runtime.sendMessage({ requestFetchAllFeeds: true } satisfies MessageToBackground);
     }
   });
 })();

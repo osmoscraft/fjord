@@ -1,8 +1,9 @@
 import browser from "webextension-polyfill";
 import { parseXmlFeed } from "../modules/feed-parser/parse";
+import type { MessageToBackground } from "../typings/events";
 
-browser.runtime.onMessage.addListener((message) => {
-  if (message.syncAll) {
+browser.runtime.onMessage.addListener((message: MessageToBackground) => {
+  if (message.requestFetchAllFeeds) {
     testFeedUrls.map((url) =>
       fetch(url)
         .then((res) => res.text())
