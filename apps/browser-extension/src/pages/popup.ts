@@ -6,7 +6,7 @@ import "./popup.css";
 
 document.body.addEventListener("click", async (e) => {
   const action = (e.target as HTMLElement)?.closest("[data-action]")?.getAttribute("data-action");
-  if (action === "sync") {
+  if (action === "fetch") {
     await setupOffscreenDocument(backgroundPageParameters);
     browser.runtime.sendMessage({ requestFetchAllFeeds: true } satisfies MessageToBackground);
   }

@@ -5,9 +5,9 @@ export function setRawConfig(config: string) {
 }
 
 export function getRawConfig() {
-  return localStorage.getItem("config") ?? "";
+  return localStorage.getItem("config");
 }
 
-export function parseConfig(raw: string) {
-  return parse(raw);
+export function parseConfig<T>(raw: string) {
+  return parse(raw) as T;
 }
