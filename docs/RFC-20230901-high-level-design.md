@@ -25,3 +25,4 @@
 - UI can toggle page between "unread/read"
 - An offline storage mode that fetches and caches article content (might be a premium feature due to cost of maintenance)
 - UI can one-click to mark all items older than X days/hours as read
+- Remove utm, referrer tracking string in the URL
