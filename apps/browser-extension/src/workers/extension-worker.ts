@@ -92,14 +92,24 @@ browser.runtime.onMessage.addListener(async (message: MessageToExtensionWorker) 
 
   if (message.didFetchAllFeeds) {
     const rootFolder = await browser.bookmarks.create({ title: "Fjord", parentId: "1", index: 0 }); // HACK: 1 is the "Favorites bar"
-    const existingChannels = (await browser.bookmarks.getSubTree(rootFolder.id))[0]?.children ?? [];
+    const existingChannelFolders = (await browser.bookmarks.getSubTree(rootFolder.id))[0]?.children ?? [];
+
+    async function doesChannelHaveUnreadItem(title: string) {
+      const folder = existingChannelFolders.find(
+        (channel) => undecorateChannelTitle(channel.title) === undecorateChannelTitle(title)
+      );
+      if (!folder) return false;
+
+      const items = (await browser.bookmarks.getSubTree(folder.id))[0]?.children ?? [];
+      return items.some((item) => isItemTitleUnread(item.title));
+    }
 
     // old to new
     const sortedChannels = message.didFetchAllFeeds.sort(
       (a, b) => (a.items.at(0)?.timePublished ?? 0) - (b.items.at(0)?.timePublished ?? 0)
     );
 
-    const removeChannels = existingChannels.filter(
+    const removeChannels = existingChannelFolders.filter(
       (existingChannel) => !sortedChannels.some((channel) => compareTitledItems(channel, existingChannel))
     );
 
@@ -107,12 +117,22 @@ browser.runtime.onMessage.addListener(async (message: MessageToExtensionWorker) 
       await browser.bookmarks.removeTree(removeChannel.id);
     }
 
-    for (const keepChannel of sortedChannels) {
+    const unreadChannelsMap = new Map<string, boolean>();
+    for (const channel of sortedChannels) {
+      unreadChannelsMap.set(channel.title, await doesChannelHaveUnreadItem(channel.title));
+    }
+
+    const unreadChannels = sortedChannels.filter((channel) => unreadChannelsMap.get(channel.title));
+    const readChannels = sortedChannels.filter((channel) => !unreadChannelsMap.get(channel.title));
+
+    for (const keepChannel of [...readChannels, ...unreadChannels]) {
       // move up existing channel
-      const folder = existingChannels.find((existingChannel) => compareTitledItems(keepChannel, existingChannel));
+      const folder = existingChannelFolders.find((existingChannel) => compareTitledItems(keepChannel, existingChannel));
       if (!folder) return;
       await browser.bookmarks.move(folder.id, { index: 0, parentId: rootFolder.id });
     }
+
+    // TODO update root folder with unread count
   }
 });
 
