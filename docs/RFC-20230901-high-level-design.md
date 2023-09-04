@@ -26,3 +26,4 @@
 - An offline storage mode that fetches and caches article content (might be a premium feature due to cost of maintenance)
 - UI can one-click to mark all items older than X days/hours as read
 - Remove utm, referrer tracking string in the URL
+- Use a bookmarklet to run javascript that marks each category as read/unread
