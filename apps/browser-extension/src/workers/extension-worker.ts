@@ -94,6 +94,21 @@ browser.runtime.onMessage.addListener(async (message: MessageToExtensionWorker) 
   }
 
   if (message.didFetchAllFeeds) {
+    const rootFolder = await browser.bookmarks.create({ title: "Fjord", parentId: "1", index: 0 }); // HACK: 1 is the "Favorites bar"
+    const existingChannels = (await browser.bookmarks.getSubTree(rootFolder.id))[0]?.children ?? [];
+
+    // old to new
+    const sortedFeeds = message.didFetchAllFeeds.sort(
+      (a, b) => (a.items.at(0)?.timePublished ?? 0) - (b.items.at(0)?.timePublished ?? 0)
+    );
+
+    const removeFeeds = existingChannels.filter(
+      (existingChannel) => !sortedFeeds.some((feed) => feed.title === undecorateChannelTitle(existingChannel.title))
+    );
+
+    for (const removeFeed of removeFeeds) {
+      await browser.bookmarks.removeTree(removeFeed.id);
+    }
   }
 });
 

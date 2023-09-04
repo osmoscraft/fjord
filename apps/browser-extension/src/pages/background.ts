@@ -4,7 +4,7 @@ import { parseXmlFeed } from "../modules/feed-parser/parse";
 import type { Feed } from "../modules/feed-parser/types";
 import type { MessageToBackground, MessageToExtensionWorker } from "../typings/events";
 
-browser.runtime.onMessage.addListener((message: MessageToBackground) => {
+browser.runtime.onMessage.addListener(async (message: MessageToBackground) => {
   if (message.requestFetchAllFeeds) {
     const raw = getRawConfig();
     if (!raw) throw new Error("Missing config");
@@ -14,16 +14,18 @@ browser.runtime.onMessage.addListener((message: MessageToBackground) => {
 
     const feeds: Feed[] = [];
 
-    config.channels.map((channel) =>
-      fetch(channel.url)
-        .then((res) => res.text())
-        .then(parseXmlFeed)
-        .then((feed) => {
-          feeds.push(feed);
-          browser.runtime.sendMessage({
-            didFetchFeed: feed,
-          } satisfies MessageToExtensionWorker);
-        })
+    await Promise.all(
+      config.channels.map((channel) =>
+        fetch(channel.url)
+          .then((res) => res.text())
+          .then(parseXmlFeed)
+          .then((feed) => {
+            feeds.push(feed);
+            browser.runtime.sendMessage({
+              didFetchFeed: feed,
+            } satisfies MessageToExtensionWorker);
+          })
+      )
     );
 
     browser.runtime.sendMessage({
