@@ -8,7 +8,20 @@
     <link rel="stylesheet" href="./options.css" />
   </head>
   <body>
-    <h1>hello world</h1>
+    <form id="config-form">
+      <menu>
+        <button data-action="validate" type="button">Validate</button>
+      </menu>
+      <label for="config-file">Config file</label>
+      <textarea
+        id="config-file"
+        name="config-file"
+        spellcheck="false"
+        autocorrect="off"
+        autocapitalize="off"
+        translate="no"
+      ></textarea>
+    </form>
     <script type="module" src="./options.js"></script>
   </body>
 </html>

@@ -1,7 +1,7 @@
 import browser from "webextension-polyfill";
-import { backgroundPageParameters } from "../modules/background/parameters";
-import { setupOffscreenDocument } from "../modules/extension/offscreen";
 import type { Feed } from "../modules/feed-parser/types";
+import { setupOffscreenDocument } from "../modules/offscreen";
+import { backgroundPageParameters } from "../modules/parameters";
 
 const preference = { runOnStartUp: false };
 
