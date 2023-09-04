@@ -31,8 +31,10 @@ channels:
 Maximum example
 
 ```yaml
-syncOnStart: false
+syncOnStart: true
 syncIntervalSeconds: 180
+meteredNetworkSyncOnStart: false
+meteredNetworkSyncIntervalSeconds: false
 maxItemsPerChannel: 30
 statusIndicator:
   root: unreadCount
