@@ -10,36 +10,33 @@ if (preference.runOnStartUp) {
   browser.runtime.onStartup.addListener(() => setupOffscreenDocument(backgroundPageParameters));
 }
 
-browser.tabs.onUpdated.addListener(async (id, info) => {
-  if (!info.url) return;
+browser.history.onVisited.addListener(async (result) => {
+  if (!result.url) return;
 
   const existingRootFolder = await browser.bookmarks.search({
     title: "Fjord",
   });
   const channels = (await browser.bookmarks.getSubTree(existingRootFolder[0].id))[0]?.children ?? [];
 
-  browser.tabs.get(id).then(async (tab) => {
-    const matchedItems = (await browser.bookmarks.search({ url: info.url })).filter((maybeItem) =>
-      channels.some((channel) => channel.id === maybeItem.parentId)
-    );
+  const searchItems = await browser.bookmarks.search({ url: result.url });
+  const matchedItems = searchItems.filter((maybeItem) => channels.some((channel) => channel.id === maybeItem.parentId));
 
-    for (const item of matchedItems) {
-      await browser.bookmarks.update(item.id, {
-        title: setItemTitleIsUnread(item.title, false),
-      });
-    }
-
-    const parentChannel = channels.find((channel) => channel.id === matchedItems[0]?.parentId);
-    if (!parentChannel) return;
-
-    const channelItems = (await browser.bookmarks.getSubTree(parentChannel.id))[0]?.children ?? [];
-    const newCount = channelItems.reduce((count, item) => {
-      return count + (isItemTitleUnread(item.title) ? 1 : 0);
-    }, 0);
-
-    await browser.bookmarks.update(parentChannel.id, {
-      title: setChannelTitle(parentChannel.title, newCount),
+  for (const item of matchedItems) {
+    await browser.bookmarks.update(item.id, {
+      title: setItemTitleIsUnread(item.title, false),
     });
+  }
+
+  const parentChannel = channels.find((channel) => channel.id === matchedItems[0]?.parentId);
+  if (!parentChannel) return;
+
+  const channelItems = (await browser.bookmarks.getSubTree(parentChannel.id))[0]?.children ?? [];
+  const newCount = channelItems.reduce((count, item) => {
+    return count + (isItemTitleUnread(item.title) ? 1 : 0);
+  }, 0);
+
+  await browser.bookmarks.update(parentChannel.id, {
+    title: setChannelTitle(parentChannel.title, newCount),
   });
 });
 
@@ -98,19 +95,30 @@ browser.runtime.onMessage.addListener(async (message: MessageToExtensionWorker) 
     const existingChannels = (await browser.bookmarks.getSubTree(rootFolder.id))[0]?.children ?? [];
 
     // old to new
-    const sortedFeeds = message.didFetchAllFeeds.sort(
+    const sortedChannels = message.didFetchAllFeeds.sort(
       (a, b) => (a.items.at(0)?.timePublished ?? 0) - (b.items.at(0)?.timePublished ?? 0)
     );
 
-    const removeFeeds = existingChannels.filter(
-      (existingChannel) => !sortedFeeds.some((feed) => feed.title === undecorateChannelTitle(existingChannel.title))
+    const removeChannels = existingChannels.filter(
+      (existingChannel) => !sortedChannels.some((channel) => compareTitledItems(channel, existingChannel))
     );
 
-    for (const removeFeed of removeFeeds) {
-      await browser.bookmarks.removeTree(removeFeed.id);
+    for (const removeChannel of removeChannels) {
+      await browser.bookmarks.removeTree(removeChannel.id);
+    }
+
+    for (const keepChannel of sortedChannels) {
+      // move up existing channel
+      const folder = existingChannels.find((existingChannel) => compareTitledItems(keepChannel, existingChannel));
+      if (!folder) return;
+      await browser.bookmarks.move(folder.id, { index: 0, parentId: rootFolder.id });
     }
   }
 });
+
+function compareTitledItems(a: { title: string }, b: { title: string }) {
+  return undecorateChannelTitle(a.title) === undecorateChannelTitle(b.title);
+}
 
 function isItemTitleUnread(title: string) {
   return title.startsWith("• ");
