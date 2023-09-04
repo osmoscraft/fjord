@@ -1,7 +1,7 @@
 import browser from "webextension-polyfill";
-import { getRawConfig, parseConfig, setRawConfig } from "../modules/config";
-import example from "../modules/example.yaml";
-import { setupOffscreenDocument } from "../modules/offscreen";
+import { getRawConfig, parseConfig, setRawConfig } from "../modules/config/config";
+import example from "../modules/config/example.yaml";
+import { setupOffscreenDocument, teardownOffscreenDocument } from "../modules/offscreen";
 import { backgroundPageParameters } from "../modules/parameters";
 import type { MessageToBackground } from "../typings/events";
 import "./options.css";
@@ -27,6 +27,14 @@ document.body.addEventListener("click", async (e) => {
   if (action === "example") {
     setRawConfig(example);
     location.reload();
+  }
+
+  if (action === "reset-background") {
+    await teardownOffscreenDocument();
+  }
+
+  if (action === "reset-extension") {
+    browser.runtime.reload();
   }
 });
 

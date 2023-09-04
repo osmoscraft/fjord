@@ -21,3 +21,11 @@ export async function setupOffscreenDocument(createParameters: chrome.offscreen.
     creating = null;
   }
 }
+
+export async function teardownOffscreenDocument() {
+  if (creating) await creating;
+
+  if (await chrome.offscreen.hasDocument()) {
+    return chrome.offscreen.closeDocument();
+  }
+}
