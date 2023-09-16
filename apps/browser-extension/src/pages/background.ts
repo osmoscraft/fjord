@@ -21,10 +21,12 @@ browser.runtime.onMessage.addListener(async (message: ExtensionMessage) => {
         fetch(channelConfig.url)
           .then((res) => res.text())
           .then((xml) => parseXmlFeed(channelConfig.url, xml))
-          .then((channel) => {
-            const existingChannel = inMemoryDB.channels.get(channelConfig.url);
-            const unreadItems = getUnreadItems(channel, existingChannel);
-            browser.runtime.sendMessage({ channelUnreadItems: unreadItems } satisfies ExtensionMessage);
+          .then(async (channel) => {
+            const inMemoryChannel = inMemoryDB.channels.get(channelConfig.url);
+
+            const unreadItems = getUnreadItems(channel, inMemoryChannel);
+            console.log(`${channelConfig.url}`, { unreadItems, channel });
+            // browser.runtime.sendMessage({ channelUnreadItems: unreadItems } satisfies ExtensionMessage);
             inMemoryDB.channels.set(channelConfig.url, channel);
           })
       )

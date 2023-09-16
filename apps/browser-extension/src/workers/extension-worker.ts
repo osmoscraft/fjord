@@ -1,4 +1,5 @@
 import browser from "webextension-polyfill";
+import { getUnreadUrls, markAsSeen } from "../modules/bookmarks";
 import { setupOffscreenDocument } from "../modules/offscreen";
 import { backgroundPageParameters } from "../modules/parameters";
 import type { ExtensionMessage } from "../typings/events";
@@ -39,35 +40,4 @@ browser.history.onVisited.addListener(async (result) => {
 async function emitUnseenUrls() {
   const unreadUrls = await getUnreadUrls();
   browser.runtime.sendMessage({ unreadUrls } satisfies ExtensionMessage);
-}
-
-async function markAsSeen(url: string) {
-  const root = await browser.bookmarks.create({
-    title: "Feed",
-    parentId: "1",
-  });
-
-  const items = await browser.bookmarks.getSubTree(root.id);
-  const treeNode = items.flatMap((item) => item.children?.find((child) => child.url === url)).filter(isNonNullish);
-
-  const foundId = treeNode.at(0)?.id;
-  if (foundId) {
-    await browser.bookmarks.remove(foundId);
-  }
-}
-
-async function getUnreadUrls() {
-  const root = await browser.bookmarks.create({
-    title: "Feed",
-    parentId: "1",
-  });
-
-  const items = await browser.bookmarks.getSubTree(root.id);
-  const urls = items.flatMap((item) => item.children?.map((child) => child.url)).filter(isNonNullish);
-
-  return urls;
-}
-
-function isNonNullish<T>(value: T | undefined | null): value is T {
-  return value !== undefined && value !== null;
 }
