@@ -14,4 +14,8 @@ document.body.addEventListener("click", async (e) => {
   if (action === "options") {
     window.open(browser.runtime.getURL("options.html"));
   }
+
+  if (action === "open-reader") {
+    window.open(browser.runtime.getURL("reader.html"));
+  }
 });
