@@ -13,6 +13,7 @@ browser.runtime.onMessage.addListener(async (message: ExtensionMessage) => {
     const raw = getRawConfig();
     if (!raw) throw new Error("Missing config");
 
+    console.log("requestChannelsUpdate", message.requestChannelsUpdate);
     const channelFolderUrlMap = new Set(message.requestChannelsUpdate.channelFolderUrls);
 
     // TODO handle invalid config
