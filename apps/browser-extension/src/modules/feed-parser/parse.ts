@@ -36,7 +36,7 @@ export const rssParser = {
     const date = itemChildren.find((node) => ["pubDate", "dc:date"].includes(node.tagName))?.textContent ?? "";
 
     return {
-      url: itemChildren.find((node) => node.tagName === "link")?.textContent?.trim() ?? undefined,
+      link: itemChildren.find((node) => node.tagName === "link")?.textContent?.trim() ?? undefined,
       title: decodedTitle,
       timePublished: coerceError(() => new Date(date ?? "").getTime(), Date.now()),
     };
@@ -62,7 +62,7 @@ export const atomParser = {
     const modifedDate = itemChildren.find((node) => node.tagName === "updated")?.textContent;
 
     return {
-      url:
+      link:
         itemChildren
           .find((node) => node.tagName === "link")
           ?.getAttribute("href")
