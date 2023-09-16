@@ -4,32 +4,35 @@ import { parseXmlFeed } from "../modules/feed-parser/parse";
 import type { FeedChannel } from "../modules/feed-parser/types";
 import type { ExtensionMessage } from "../typings/events";
 
+const inMemoryDB = {
+  channels: new Map<string, FeedChannel>(),
+};
+
 browser.runtime.onMessage.addListener(async (message: ExtensionMessage) => {
-  if (message.requestFetchAllFeeds) {
+  if (message.requestChannelsUpdate) {
     const raw = getRawConfig();
     if (!raw) throw new Error("Missing config");
 
     // TODO handle invalid config
     const config = parseConfig(raw);
 
-    const feeds: FeedChannel[] = [];
-
     await Promise.all(
-      config.channels.map((channel) =>
-        fetch(channel.url)
+      config.channels.map((channelConfig) =>
+        fetch(channelConfig.url)
           .then((res) => res.text())
-          .then((xml) => parseXmlFeed(channel.url, xml))
-          .then((feed) => {
-            feeds.push(feed);
-            browser.runtime.sendMessage({
-              didFetchFeed: feed,
-            } satisfies ExtensionMessage);
-          })
+          .then((xml) => parseXmlFeed(channelConfig.url, xml))
+          .then((channel) => inMemoryDB.channels.set(channelConfig.url, channel))
       )
     );
 
     browser.runtime.sendMessage({
-      didFetchAllFeeds: feeds,
+      channelsUpdated: [...inMemoryDB.channels.values()],
+    } satisfies ExtensionMessage);
+  }
+
+  if (message.requestsChannelsData) {
+    browser.runtime.sendMessage({
+      channelsData: [...inMemoryDB.channels.values()],
     } satisfies ExtensionMessage);
   }
 });

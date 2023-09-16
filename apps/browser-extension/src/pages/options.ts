@@ -17,7 +17,7 @@ document.body.addEventListener("click", async (e) => {
 
   if (action === "fetch") {
     await setupOffscreenDocument(backgroundPageParameters);
-    browser.runtime.sendMessage({ requestFetchAllFeeds: true } satisfies ExtensionMessage);
+    browser.runtime.sendMessage({ requestChannelsUpdate: true } satisfies ExtensionMessage);
   }
 
   if (action === "validate") {

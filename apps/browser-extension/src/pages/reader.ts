@@ -6,15 +6,14 @@ import "./reader.css";
 customElements.define("feeds-menu-element", FeedsMenuElement);
 
 browser.runtime.onMessage.addListener(async (message: ExtensionMessage) => {
-  if (message.didFetchFeed) {
-    console.log(message.didFetchFeed);
+  if (message.channelsUpdated) {
+    document.querySelector<FeedsMenuElement>(`feeds-menu-element`)?.renderFeeds(message.channelsUpdated);
   }
 
-  if (message.didFetchAllFeeds) {
-    document.querySelector<FeedsMenuElement>(`feeds-menu-element`)?.renderFeeds(message.didFetchAllFeeds);
-    console.log(message.didFetchAllFeeds);
+  if (message.channelsData) {
+    document.querySelector<FeedsMenuElement>(`feeds-menu-element`)?.renderFeeds(message.channelsData);
   }
 });
 
 // fetch on start
-browser.runtime.sendMessage({ requestFetchAllFeeds: true } satisfies ExtensionMessage);
+browser.runtime.sendMessage({ requestsChannelsData: true } satisfies ExtensionMessage);

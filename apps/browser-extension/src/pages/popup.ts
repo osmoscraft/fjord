@@ -8,7 +8,7 @@ document.body.addEventListener("click", async (e) => {
   const action = (e.target as HTMLElement)?.closest("[data-action]")?.getAttribute("data-action");
   if (action === "fetch") {
     await setupOffscreenDocument(backgroundPageParameters);
-    browser.runtime.sendMessage({ requestFetchAllFeeds: true } satisfies ExtensionMessage);
+    browser.runtime.sendMessage({ requestChannelsUpdate: true } satisfies ExtensionMessage);
   }
 
   if (action === "options") {

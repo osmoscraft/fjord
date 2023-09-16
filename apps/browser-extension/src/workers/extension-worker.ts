@@ -9,3 +9,12 @@ browser.history.onVisited.addListener(async (result) => {
   if (!result.url) return;
   console.log("visited", result.url);
 });
+
+function ensureBookmarksFolder() {
+  browser.bookmarks.create({
+    title: "Feed",
+    parentId: "1",
+  });
+}
+
+ensureBookmarksFolder();
