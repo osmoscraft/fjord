@@ -16,9 +16,11 @@ export class FeedsMenuElement extends HTMLElement {
               return channel.items
                 .map(
                   (item) => `<article class="c-item">
-                    <a href="${channel.url}" title="${channel.title}"><img class="c-item-icon" alt="" src="${
-                    channel.icon ?? getGoogleFaviconUrl(item.url)
-                  }"></a> <a href="${item.url}" class="c-item-title">${item.title}</a></article>`
+                    <a href="${channel.homeUrl}" title="${
+                    channel.title
+                  }"><img class="c-item-icon" alt="" loading="lazy" src="${getGoogleFaviconUrl(
+                    item.url
+                  )}"></a> <a href="${item.url}" class="c-item-title">${item.title}</a></article>`
                 )
                 .join("");
             })
@@ -34,8 +36,8 @@ interface FeedsByDate {
   startDate: number;
   channels: {
     title: string;
-    icon?: string;
     url: string;
+    homeUrl: string;
     items: {
       title: string;
       url: string;
@@ -48,8 +50,9 @@ interface FlatItem {
   channel: {
     url: string;
     title: string;
-    icon?: string;
+    homeUrl: string;
   };
+  icon: string;
   title: string;
   url: string;
 }
@@ -66,8 +69,9 @@ function groupByDate(channels: FeedChannel[]): FeedsByDate[] {
           channel: {
             url: channel.url,
             title: channel.title,
-            icon: channel.icon,
+            homeUrl: channel.homeUrl ?? item.url,
           },
+          icon: getGoogleFaviconUrl(item.url),
           title: item.title,
           url: item.url,
         }))
@@ -85,14 +89,14 @@ function groupByDate(channels: FeedChannel[]): FeedsByDate[] {
         existingDate.channels.push({
           title: item.channel.title,
           url: item.channel.url,
-          icon: item.channel.icon,
+          homeUrl: item.channel.homeUrl,
           items: [item],
         });
       }
     } else {
       acc.push({
         startDate: item.date,
-        channels: [{ title: item.channel.title, url: item.channel.url, items: [item] }],
+        channels: [{ title: item.channel.title, url: item.channel.url, homeUrl: item.channel.homeUrl, items: [item] }],
       });
     }
     return acc;

@@ -26,13 +26,13 @@ export const rssParser = {
   selectChannel: (root: Document) => root.getElementsByTagName("channel")[0],
   selectItems: (root: Document) => root.getElementsByTagName("item"),
   resolveChannel: (channelElement: Element) => {
+    const channelChildren = [...channelElement.children];
+    const homeUrl = channelChildren.find((node) => node.tagName === "link")?.textContent ?? undefined;
+
     return {
       title: parseChildByTagName(channelElement, "title")?.text() ?? "",
+      homeUrl,
       items: [],
-      icon:
-        channelElement.querySelector(":scope > image url")?.textContent ??
-        channelElement.getElementsByTagName("image")[0]?.getAttribute("rdf:resource") ??
-        undefined,
     };
   },
   resolveItem: (item: Element) => {
@@ -54,9 +54,14 @@ export const atomParser = {
   selectItems: (root: Document) => root.getElementsByTagName("entry"),
   resolveChannel: (channelElement: Element) => {
     const channelChildren = [...channelElement.children];
+    const homeUrl =
+      channelChildren
+        .find((node) => node.tagName === "link" && node.getAttribute("rel") !== "self")
+        ?.getAttribute("href") ?? undefined;
 
     return {
       title: channelChildren.find((node) => node.tagName === "title")?.textContent ?? "",
+      homeUrl,
       items: [],
     };
   },
