@@ -6,5 +6,6 @@ export interface ExtensionMessage {
   requestUnreadUrls?: boolean;
   channelsData?: FeedChannel[];
   channelsUpdated?: FeedChannel[];
+  channelUnreadItems?: { title: string; url: string }[];
   unreadUrls?: string[];
 }

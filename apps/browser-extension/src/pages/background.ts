@@ -21,7 +21,12 @@ browser.runtime.onMessage.addListener(async (message: ExtensionMessage) => {
         fetch(channelConfig.url)
           .then((res) => res.text())
           .then((xml) => parseXmlFeed(channelConfig.url, xml))
-          .then((channel) => inMemoryDB.channels.set(channelConfig.url, channel))
+          .then((channel) => {
+            const existingChannel = inMemoryDB.channels.get(channelConfig.url);
+            const unreadItems = getUnreadItems(channel, existingChannel);
+            browser.runtime.sendMessage({ channelUnreadItems: unreadItems } satisfies ExtensionMessage);
+            inMemoryDB.channels.set(channelConfig.url, channel);
+          })
       )
     );
 
@@ -36,3 +41,16 @@ browser.runtime.onMessage.addListener(async (message: ExtensionMessage) => {
     } satisfies ExtensionMessage);
   }
 });
+
+function getUnreadItems(incomingChannel: FeedChannel, existingChannel?: FeedChannel): { url: string; title: string }[] {
+  const unreadItems = incomingChannel.items
+    .filter((item) =>
+      existingChannel ? existingChannel.items.every((existingItem) => existingItem.url !== item.url) : true
+    )
+    .map((item) => ({
+      url: item.url,
+      title: item.title,
+    }));
+
+  return unreadItems;
+}

@@ -9,6 +9,21 @@ browser.runtime.onMessage.addListener(async (message: ExtensionMessage) => {
   if (message.requestUnreadUrls) {
     emitUnseenUrls();
   }
+
+  if (message.channelUnreadItems) {
+    const root = await browser.bookmarks.create({
+      title: "Feed",
+      parentId: "1",
+    });
+
+    message.channelUnreadItems.map((item) =>
+      browser.bookmarks.create({
+        title: item.title,
+        url: item.url,
+        parentId: root.id,
+      })
+    );
+  }
 });
 
 browser.bookmarks.onChanged.addListener(emitUnseenUrls);
