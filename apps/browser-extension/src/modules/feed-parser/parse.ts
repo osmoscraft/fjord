@@ -29,6 +29,10 @@ export const rssParser = {
     return {
       title: parseChildByTagName(channelElement, "title")?.text() ?? "",
       items: [],
+      icon:
+        channelElement.querySelector(":scope > image url")?.textContent ??
+        channelElement.getElementsByTagName("image")[0]?.getAttribute("rdf:resource") ??
+        undefined,
     };
   },
   resolveItem: (item: Element) => {

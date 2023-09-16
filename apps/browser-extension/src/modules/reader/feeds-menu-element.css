@@ -13,9 +13,29 @@
 
 .c-date-content {
   display: grid;
-  gap: 8px;
 }
 
-.c-channel-items {
-  padding-inline-start: 16px;
+.c-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px;
+  align-items: start;
+  --line-height: 20px;
+  --icon-size: 16px;
+}
+
+.c-item-icon {
+  width: var(--icon-size);
+  transform: translateY(calc(calc(var(--line-height) - var(--icon-size)) / 2));
+}
+
+.c-item-title {
+  font-size: 16px;
+  line-height: var(--line-height);
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
