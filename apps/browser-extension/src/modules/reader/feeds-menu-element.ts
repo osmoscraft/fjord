@@ -113,13 +113,6 @@ function getStartOfDayDate(date: number) {
   return d.getTime();
 }
 
-function getFaviconUrl(pageUrl: string) {
-  const url = new URL(chrome.runtime.getURL("/_favicon/"));
-  url.searchParams.set("pageUrl", pageUrl);
-  url.searchParams.set("size", "32");
-  return url.toString();
-}
-
 function getGoogleFaviconUrl(pageUrl: string) {
   return `https://www.google.com/s2/favicons?domain=${new URL(pageUrl).host}&sz=32`;
 }
