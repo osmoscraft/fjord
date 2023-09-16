@@ -6,10 +6,12 @@ export async function markAsSeen(url: string) {
     parentId: "1",
   });
 
-  const items = await browser.bookmarks.getSubTree(root.id);
-  const treeNode = items.flatMap((item) => item.children?.find((child) => child.url === url)).filter(isNonNullish);
+  const channelFolders = (await browser.bookmarks.getSubTree(root.id)).at(0)?.children ?? [];
+  const pageMatches = channelFolders
+    .map((channel) => channel.children?.find((child) => child.url === url))
+    .filter(isNonNullish);
 
-  const foundId = treeNode.at(0)?.id;
+  const foundId = pageMatches.at(0)?.id;
   if (foundId) {
     await browser.bookmarks.remove(foundId);
   }
@@ -22,7 +24,7 @@ export async function getUnreadUrls() {
   });
 
   const channels = (await browser.bookmarks.getSubTree(root.id))?.[0].children ?? [];
-  const urls = channels.flatMap((item) => item.children?.map((child) => child.url)).filter(isNonNullish);
+  const urls = channels.flatMap((channel) => channel.children?.map((child) => child.url)).filter(isNonNullish);
 
   return urls;
 }

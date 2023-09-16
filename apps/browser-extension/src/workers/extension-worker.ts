@@ -17,11 +17,16 @@ browser.runtime.onMessage.addListener(async (message: ExtensionMessage) => {
       parentId: "1",
     });
 
-    message.channelUnreadItems.map((item) =>
+    const channelFolder = await browser.bookmarks.create({
+      title: message.channelUnreadItems.channelUrl,
+      parentId: root.id,
+    });
+
+    message.channelUnreadItems.items.map((item) =>
       browser.bookmarks.create({
         title: item.title,
         url: item.url,
-        parentId: root.id,
+        parentId: channelFolder.id,
       })
     );
   }
@@ -39,5 +44,6 @@ browser.history.onVisited.addListener(async (result) => {
 
 async function emitUnseenUrls() {
   const unreadUrls = await getUnreadUrls();
+  console.log("unreadUrls changed", { unreadUrls });
   browser.runtime.sendMessage({ unreadUrls } satisfies ExtensionMessage);
 }

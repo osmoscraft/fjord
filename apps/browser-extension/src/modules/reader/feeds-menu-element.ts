@@ -62,21 +62,17 @@ interface FlatItem {
 function groupByDate(channels: FeedChannel[]): FeedsByDate[] {
   const flatItems: FlatItem[] = channels
     .flatMap((channel) =>
-      // HACK: prevent perf issue with count freshness limit
-      channel.items
-        .filter((item) => item.timePublished > new Date(Date.now() - 365 * 24 * 3600 * 1000).getTime())
-        .slice(0, 10)
-        .map((item) => ({
-          date: getStartOfDayDate(item.timePublished),
-          channel: {
-            url: channel.url,
-            title: channel.title,
-            homeUrl: channel.homeUrl ?? item.url,
-          },
-          icon: getGoogleFaviconUrl(item.url),
-          title: item.title,
-          url: item.url,
-        }))
+      channel.items.map((item) => ({
+        date: getStartOfDayDate(item.timePublished),
+        channel: {
+          url: channel.url,
+          title: channel.title,
+          homeUrl: channel.homeUrl ?? item.url,
+        },
+        icon: getGoogleFaviconUrl(item.url),
+        title: item.title,
+        url: item.url,
+      }))
     )
     .sort((a, b) => b.date - a.date);
 
