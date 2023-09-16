@@ -16,4 +16,7 @@ browser.runtime.onMessage.addListener(async (message: ExtensionMessage) => {
 });
 
 // fetch on start
+// TODO only on non-metered connection
+browser.runtime.sendMessage({ requestChannelsUpdate: true } satisfies ExtensionMessage);
+
 browser.runtime.sendMessage({ requestsChannelsData: true } satisfies ExtensionMessage);
