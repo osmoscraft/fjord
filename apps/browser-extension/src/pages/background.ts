@@ -1,10 +1,10 @@
 import browser from "webextension-polyfill";
 import { getRawConfig, parseConfig } from "../modules/config/config";
 import { parseXmlFeed } from "../modules/feed-parser/parse";
-import type { Feed } from "../modules/feed-parser/types";
-import type { MessageToBackground, MessageToExtensionWorker } from "../typings/events";
+import type { FeedChannel } from "../modules/feed-parser/types";
+import type { ExtensionMessage } from "../typings/events";
 
-browser.runtime.onMessage.addListener(async (message: MessageToBackground) => {
+browser.runtime.onMessage.addListener(async (message: ExtensionMessage) => {
   if (message.requestFetchAllFeeds) {
     const raw = getRawConfig();
     if (!raw) throw new Error("Missing config");
@@ -12,24 +12,24 @@ browser.runtime.onMessage.addListener(async (message: MessageToBackground) => {
     // TODO handle invalid config
     const config = parseConfig(raw);
 
-    const feeds: Feed[] = [];
+    const feeds: FeedChannel[] = [];
 
     await Promise.all(
       config.channels.map((channel) =>
         fetch(channel.url)
           .then((res) => res.text())
-          .then(parseXmlFeed)
+          .then((xml) => parseXmlFeed(channel.url, xml))
           .then((feed) => {
             feeds.push(feed);
             browser.runtime.sendMessage({
               didFetchFeed: feed,
-            } satisfies MessageToExtensionWorker);
+            } satisfies ExtensionMessage);
           })
       )
     );
 
     browser.runtime.sendMessage({
       didFetchAllFeeds: feeds,
-    } satisfies MessageToExtensionWorker);
+    } satisfies ExtensionMessage);
   }
 });

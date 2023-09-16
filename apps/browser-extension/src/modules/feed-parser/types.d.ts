@@ -1,10 +1,11 @@
-export type Feed = {
+export type FeedChannel = {
+  url: string;
   title: string;
-  entries: Entry[];
+  items: FeedItem[];
 };
 
-export type Entry = {
-  link: string;
+export type FeedItem = {
+  url: string;
   title: string;
   timePublished: number;
 };

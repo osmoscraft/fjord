@@ -1,10 +1,7 @@
-import type { Feed } from "../modules/feed-parser/types";
+import type { FeedChannel } from "../modules/feed-parser/types";
 
-export interface MessageToBackground {
+export interface ExtensionMessage {
   requestFetchAllFeeds?: boolean;
-}
-
-export interface MessageToExtensionWorker {
-  didFetchFeed?: Feed;
-  didFetchAllFeeds?: Feed[];
+  didFetchFeed?: FeedChannel;
+  didFetchAllFeeds?: FeedChannel[];
 }

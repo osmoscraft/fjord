@@ -3,7 +3,7 @@ import { getRawConfig, parseConfig, setRawConfig } from "../modules/config/confi
 import example from "../modules/config/example.yaml";
 import { setupOffscreenDocument, teardownOffscreenDocument } from "../modules/offscreen";
 import { backgroundPageParameters } from "../modules/parameters";
-import type { MessageToBackground } from "../typings/events";
+import type { ExtensionMessage } from "../typings/events";
 import "./options.css";
 
 const form = document.querySelector("form")!;
@@ -17,7 +17,7 @@ document.body.addEventListener("click", async (e) => {
 
   if (action === "fetch") {
     await setupOffscreenDocument(backgroundPageParameters);
-    browser.runtime.sendMessage({ requestFetchAllFeeds: true } satisfies MessageToBackground);
+    browser.runtime.sendMessage({ requestFetchAllFeeds: true } satisfies ExtensionMessage);
   }
 
   if (action === "validate") {

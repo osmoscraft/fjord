@@ -1,8 +1,8 @@
-import type { Entry, Feed } from "./types";
+import type { FeedChannel, FeedItem } from "./types";
 
 const domParser = new DOMParser();
 
-export function parseXmlFeed(xml: string): Feed {
+export function parseXmlFeed(url: string, xml: string): FeedChannel {
   const trimmedInput = xml.trim();
   const dom = domParser.parseFromString(trimmedInput, "application/xml");
   const parser = [rssParser, atomParser].find((parser) => parser.isMatch(dom));
@@ -15,8 +15,9 @@ export function parseXmlFeed(xml: string): Feed {
   const channelElement = selectChannel(dom);
 
   return {
+    url,
     ...resolveChannel(channelElement),
-    entries: [...selectItems(dom)].map(resolveItem).filter(isArticle),
+    items: [...selectItems(dom)].map(resolveItem).filter(isArticle),
   };
 }
 
@@ -33,10 +34,10 @@ export const rssParser = {
   resolveItem: (item: Element) => {
     const itemChildren = [...item.children];
     const decodedTitle = parseChildByTagName(item, "title")?.text();
-    const date = itemChildren.find((node) => ["pubDate", "dc:date"].includes(node.tagName))?.textContent ?? "";
+    const date = itemChildren.find((node) => ["pubDate", "dc:date"].includes(node.tagName))?.textContent?.trim() ?? "";
 
     return {
-      link: itemChildren.find((node) => node.tagName === "link")?.textContent?.trim() ?? undefined,
+      url: itemChildren.find((node) => node.tagName === "link")?.textContent?.trim() ?? undefined,
       title: decodedTitle,
       timePublished: coerceError(() => new Date(date ?? "").getTime(), Date.now()),
     };
@@ -62,7 +63,7 @@ export const atomParser = {
     const modifedDate = itemChildren.find((node) => node.tagName === "updated")?.textContent;
 
     return {
-      link:
+      url:
         itemChildren
           .find((node) => node.tagName === "link")
           ?.getAttribute("href")
@@ -73,8 +74,8 @@ export const atomParser = {
   },
 };
 
-function isArticle(item: Partial<Entry>): item is Entry {
-  return !!item.title && !!item.link;
+function isArticle(item: Partial<FeedItem>): item is FeedItem {
+  return !!item.title && !!item.url;
 }
 
 function parseChildByTagName(node: Element, tagName: string): ParsedXmlNode | undefined {

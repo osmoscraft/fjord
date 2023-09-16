@@ -1,0 +1,21 @@
+.c-feeds-menu {
+  display: grid;
+  gap: 16px;
+}
+
+.c-date-view {
+  display: grid;
+}
+
+.c-date-title {
+  font-weight: bold;
+}
+
+.c-date-content {
+  display: grid;
+  gap: 8px;
+}
+
+.c-channel-items {
+  padding-inline-start: 16px;
+}
