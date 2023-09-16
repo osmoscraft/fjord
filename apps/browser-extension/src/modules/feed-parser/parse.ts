@@ -1,4 +1,4 @@
-import type { Feed, FeedItem } from "./types";
+import type { Entry, Feed } from "./types";
 
 const domParser = new DOMParser();
 
@@ -16,7 +16,7 @@ export function parseXmlFeed(xml: string): Feed {
 
   return {
     ...resolveChannel(channelElement),
-    items: [...selectItems(dom)].map(resolveItem).filter(isArticle),
+    entries: [...selectItems(dom)].map(resolveItem).filter(isArticle),
   };
 }
 
@@ -73,8 +73,8 @@ export const atomParser = {
   },
 };
 
-function isArticle(item: Partial<FeedItem>): item is FeedItem {
-  return !!item.title && !!item.url;
+function isArticle(item: Partial<Entry>): item is Entry {
+  return !!item.title && !!item.link;
 }
 
 function parseChildByTagName(node: Element, tagName: string): ParsedXmlNode | undefined {
