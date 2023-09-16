@@ -26,7 +26,7 @@ browser.runtime.onMessage.addListener(async (message: ExtensionMessage) => {
     );
 
     browser.runtime.sendMessage({
-      channelsUpdated: [...inMemoryDB.channels.values()],
+      channelsData: [...inMemoryDB.channels.values()],
     } satisfies ExtensionMessage);
   }
 

@@ -2,12 +2,12 @@ import type { FeedChannel } from "../feed-parser/types";
 import "./feeds-menu-element.css";
 
 export class FeedsMenuElement extends HTMLElement {
-  renderFeeds(feeds: FeedChannel[]) {
+  renderFeeds(feeds: FeedChannel[], unreadUrls: Set<string>) {
     this.innerHTML = `<nav class="c-feeds-menu">${groupByDate(feeds)
       .map((feedByDate) => {
         return `
-        <div class="c-date-view">
-          <div class="c-date-title">${new Date(feedByDate.startDate).toLocaleDateString()}</div>
+        <fieldset class="c-date-view">
+          <legend class="c-date-title">${new Date(feedByDate.startDate).toLocaleDateString()}</legend>
           <div class="c-date-content">
           ${feedByDate.channels
             .map((channel) => {
@@ -20,13 +20,15 @@ export class FeedsMenuElement extends HTMLElement {
                     channel.title
                   }"><img class="c-item-icon" alt="" loading="lazy" src="${getGoogleFaviconUrl(
                     item.url
-                  )}"></a> <a href="${item.url}" class="c-item-title">${item.title}</a></article>`
+                  )}"></a><a href="${item.url}" class="c-item-title" data-unread="${unreadUrls.has(item.url)}">${
+                    item.title
+                  }</a></article>`
                 )
                 .join("");
             })
             .join("")}
           </div>
-        </div>`;
+        </fieldset>`;
       })
       .join("")}</nav>`;
   }

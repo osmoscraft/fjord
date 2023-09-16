@@ -6,10 +6,11 @@
 .c-date-view {
   display: grid;
   gap: 4px;
+  padding-inline: 8px;
+  padding-block: 4px;
 }
 
 .c-date-title {
-  font-weight: bold;
   font-size: 16px;
 }
 
@@ -40,5 +41,9 @@
 
   &:hover {
     text-decoration: underline;
+  }
+
+  &[data-unread="true"] {
+    font-weight: bold;
   }
 }

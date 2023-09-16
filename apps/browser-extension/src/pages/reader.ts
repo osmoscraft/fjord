@@ -5,18 +5,32 @@ import "./reader.css";
 
 customElements.define("feeds-menu-element", FeedsMenuElement);
 
+interface State {
+  channelsData?: ExtensionMessage["channelsData"];
+  unreadUrls?: Set<string>;
+}
+const state: State = {};
+
 browser.runtime.onMessage.addListener(async (message: ExtensionMessage) => {
-  if (message.channelsUpdated) {
-    document.querySelector<FeedsMenuElement>(`feeds-menu-element`)?.renderFeeds(message.channelsUpdated);
+  if (message.channelsData) {
+    state.channelsData = message.channelsData;
+    render(state);
   }
 
-  if (message.channelsData) {
-    document.querySelector<FeedsMenuElement>(`feeds-menu-element`)?.renderFeeds(message.channelsData);
+  if (message.unreadUrls) {
+    state.unreadUrls = new Set(message.unreadUrls);
+    render(state);
   }
 });
+
+function render(state: State) {
+  if (!state.channelsData || !state.unreadUrls) return;
+  document.querySelector<FeedsMenuElement>(`feeds-menu-element`)?.renderFeeds(state.channelsData, state.unreadUrls);
+}
 
 // fetch on start
 // TODO only on non-metered connection
 browser.runtime.sendMessage({ requestChannelsUpdate: true } satisfies ExtensionMessage);
+browser.runtime.sendMessage({ requestUnreadUrls: true } satisfies ExtensionMessage);
 
 browser.runtime.sendMessage({ requestsChannelsData: true } satisfies ExtensionMessage);
