@@ -1,4 +1,1 @@
-- TODO: RFC design issue: Organize by date allows user to skip "mark as read opertaion" and rely on date as freshness guarantee
-- TODO: Hybride approach where unread status is only tracked for N-days (N = 1 by default). With 2 root folders
-  - Fresh
-  - Archive 
+- TODO: test bookmark bar item url length limit (brute force max length js)
