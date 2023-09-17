@@ -1,0 +1,32 @@
+# Storage
+
+- Browser bookmark
+  - Use feed url as the title of the file for fast lookup
+  - Use `javascript:{...}` special URL to json object
+  - Use `data:application/json;base64...` to store json feed data + read/unread status
+    - Retains human readability with browser native json view
+  - Use gzip `octet-stream` encoding to reduce size
+  - The bookmark tree is mirrored to an in-memory object
+    - Encapsulate the storage into an async API. Hide bookmark backup/restore logic
+- Each channel stores info to hydrate the feed even when offline
+  - Channel level
+    - Title
+    - Home page url
+    - Subscript url
+  - Item level
+    - Title
+    - Url
+    - publishTime
+- On sync
+  - Per config channel: fetch latest data, merge with bookmarked channel, re-render
+    - If config channel does not exist, but bookmark does, delete the bookmark
+    - If config channel exists, but bookmark does not, consider all items seen (1st time)
+  - Items with in a channel
+    - Detect new items by URL
+    - Eliminate old items by total item count per channel and/or by oldest publishTime cutoff
+- Track status
+  - On visit, use the in-memory object to find the channel
+  - Fetch channel json data, update, write back to bookmark
+- Toggle status
+  - On click, use the in-memory object to find the channel
+  - Flip the status, write back to bookmark
