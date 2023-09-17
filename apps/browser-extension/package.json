@@ -24,6 +24,7 @@
     "tsx": "^3.12.7"
   },
   "dependencies": {
+    "lit-html": "^2.8.0",
     "webextension-polyfill": "^0.10.0",
     "yaml": "^2.3.2"
   }
