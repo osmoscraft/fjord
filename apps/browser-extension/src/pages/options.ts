@@ -1,9 +1,7 @@
 import browser from "webextension-polyfill";
 import { getRawConfig, parseConfig, setRawConfig } from "../modules/config/config";
 import example from "../modules/config/example.yaml";
-import { setupOffscreenDocument, teardownOffscreenDocument } from "../modules/offscreen";
-import { backgroundPageParameters } from "../modules/parameters";
-import type { ExtensionMessage } from "../typings/events";
+import { teardownOffscreenDocument } from "../modules/offscreen";
 import "./options.css";
 
 const form = document.querySelector("form")!;
@@ -14,11 +12,6 @@ validate();
 
 document.body.addEventListener("click", async (e) => {
   const action = (e.target as HTMLElement)?.closest("[data-action]")?.getAttribute("data-action");
-
-  if (action === "fetch") {
-    await setupOffscreenDocument(backgroundPageParameters);
-    browser.runtime.sendMessage({ requestChannelsUpdate: true } satisfies ExtensionMessage);
-  }
 
   if (action === "validate") {
     validate();
