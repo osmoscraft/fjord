@@ -2,7 +2,7 @@ import type { FeedChannel, FeedItem } from "./types";
 
 const domParser = new DOMParser();
 
-export function parseXmlFeed(url: string, xml: string): FeedChannel {
+export function parseXmlFeed(xml: string): FeedChannel {
   const trimmedInput = xml.trim();
   const dom = domParser.parseFromString(trimmedInput, "application/xml");
   const parser = [rssParser, atomParser].find((parser) => parser.isMatch(dom));
@@ -15,7 +15,6 @@ export function parseXmlFeed(url: string, xml: string): FeedChannel {
   const channelElement = selectChannel(dom);
 
   return {
-    url,
     ...resolveChannel(channelElement),
     items: [...selectItems(dom)].map(resolveItem).filter(isArticle),
   };

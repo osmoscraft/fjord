@@ -1,4 +1,5 @@
 import browser from "webextension-polyfill";
+import type { ExtensionMessage } from "../typings/message";
 import "./popup.css";
 
 document.body.addEventListener("click", async (e) => {
@@ -14,5 +15,9 @@ document.body.addEventListener("click", async (e) => {
 
   if (action === "reset") {
     browser.runtime.reload();
+  }
+
+  if (action === "fetch") {
+    browser.runtime.sendMessage({ fetchAll: true } satisfies ExtensionMessage).then(console.log);
   }
 });

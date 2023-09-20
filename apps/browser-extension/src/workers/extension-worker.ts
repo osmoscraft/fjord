@@ -1,14 +1,21 @@
 import browser from "webextension-polyfill";
-import readerHtml from "../../public/reader.html";
+import { getChannels, setChannelBookmark } from "../modules/bookmarks";
 import { setupOffscreenDocument } from "../modules/offscreen";
 import { backgroundPageParameters } from "../modules/parameters";
+import { renderChannels } from "../modules/reader/render-feed";
+import type { ExtensionMessage } from "../typings/message";
 
 (globalThis.self as any as ServiceWorkerGlobalScope).addEventListener("fetch", (event) => {
-  // return;
   const requestUrl = new URL(event.request.url);
   if (requestUrl.pathname === "/reader.html") {
-    // SSR render html "<h1>Hello World</h1>"
-    event.respondWith(new Response(readerHtml, { headers: { "Content-Type": "text/html" } }));
+    const responseAsync = new Promise<Response>(async (resolve) => {
+      const channels = await getChannels();
+      const html = renderChannels(channels, new Set());
+      console.log("channels", { channels, html });
+      resolve(new Response(html, { headers: { "Content-Type": "text/html" } }));
+    });
+
+    event.respondWith(responseAsync);
   }
 });
 
@@ -31,6 +38,10 @@ function handleBrowserStart() {
 
 function handleBookmarksChange() {}
 
-function handleExtensionWorkerMessage(message: any, sender: browser.Runtime.MessageSender, sendResponse: () => void) {}
+async function handleExtensionWorkerMessage(message: ExtensionMessage) {
+  if (message.channelData) {
+    setChannelBookmark(message.channelData);
+  }
+}
 
 function handleVisit(result: browser.History.HistoryItem) {}

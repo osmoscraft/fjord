@@ -1,5 +1,4 @@
 export type FeedChannel = {
-  url: string;
   homeUrl?: string;
   title: string;
   items: FeedItem[];
