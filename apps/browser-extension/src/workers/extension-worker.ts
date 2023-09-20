@@ -1,4 +1,5 @@
 import browser from "webextension-polyfill";
+import readerHtml from "../../public/reader.html";
 import { setupOffscreenDocument } from "../modules/offscreen";
 import { backgroundPageParameters } from "../modules/parameters";
 
@@ -7,7 +8,7 @@ import { backgroundPageParameters } from "../modules/parameters";
   const requestUrl = new URL(event.request.url);
   if (requestUrl.pathname === "/reader.html") {
     // SSR render html "<h1>Hello World</h1>"
-    event.respondWith(new Response(`<pre>SSR HTML Placeholder</pre>`, { headers: { "Content-Type": "text/html" } }));
+    event.respondWith(new Response(readerHtml, { headers: { "Content-Type": "text/html" } }));
   }
 });
 
