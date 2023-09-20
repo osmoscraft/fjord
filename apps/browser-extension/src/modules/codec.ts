@@ -12,6 +12,5 @@ export async function objectToDataUrl(object: any): Promise<string> {
 
 export async function dataUrlToObject<T = any>(dataUrl: string): Promise<T> {
   const result = await fetch(dataUrl).then((res) => res.json());
-  console.log("decoded", result);
   return result;
 }

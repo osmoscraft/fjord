@@ -22,7 +22,7 @@ export async function setChannelBookmark(channelData: ChannelData) {
     title: "Feed",
     parentId: "1",
   });
-  const dataUrl = await objectToDataUrl(JSON.stringify(channelData));
+  const dataUrl = await objectToDataUrl(channelData);
 
   const existingBookmark = (await browser.bookmarks.getChildren(root.id)).find(
     (child) => child.title === channelData.url

@@ -1,3 +1,7 @@
+@import "../styles/reset.css";
+@import "../styles/theme.css";
+@import "../styles/override.css";
+
 .c-feeds-menu {
   display: grid;
   gap: 16px;

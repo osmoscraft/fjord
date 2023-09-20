@@ -10,7 +10,20 @@ import type { ExtensionMessage } from "../typings/message";
   if (requestUrl.pathname === "/reader.html") {
     const responseAsync = new Promise<Response>(async (resolve) => {
       const channels = await getChannels();
-      const html = renderChannels(channels, new Set());
+      const html = `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fjord</title>
+    <link rel="icon" type="image/svg+xml" href="./images/icon.svg" />
+    <link rel="stylesheet" href="./reader.css" />
+  </head>
+  <body>
+  ${renderChannels(channels, new Set())}
+  </body>
+</html>`;
       console.log("channels", { channels, html });
       resolve(new Response(html, { headers: { "Content-Type": "text/html" } }));
     });
