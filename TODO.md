@@ -1,1 +1,5 @@
-- TODO: test bookmark bar item url length limit (brute force max length js)
+- POC: Test bookmark bar item url length limit (brute force max length js)
+- Bug: Race condition when open multiple in quick succession
+- Perf: Slow status toggle
+- Perf: Use in-memory cache to manage all read status
+- Feature: Add "fetch" and "manage" button
