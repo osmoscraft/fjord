@@ -1,5 +1,5 @@
 import browser from "webextension-polyfill";
-import { getChannels, setChannelBookmark, setIsUnread } from "../modules/bookmarks";
+import { getAllUnreadUrls, getChannels, setChannelBookmark, setIsUnread } from "../modules/bookmarks";
 import { setupOffscreenDocument } from "../modules/offscreen";
 import { backgroundPageParameters } from "../modules/parameters";
 import { renderChannels } from "../modules/reader/render-feed";
@@ -21,7 +21,8 @@ import type { ExtensionMessage } from "../typings/message";
     <link rel="stylesheet" href="./reader.css" />
   </head>
   <body>
-  ${renderChannels(channels)}
+    ${renderChannels(channels)}
+    <script type="module" src="./reader.js"></script>
   </body>
 </html>`;
       console.log("channels", { channels, html });
@@ -49,7 +50,10 @@ function handleBrowserStart() {
   return setupOffscreenDocument(backgroundPageParameters);
 }
 
-function handleBookmarksChange() {}
+async function handleBookmarksChange() {
+  const unreadUrls = await getAllUnreadUrls();
+  browser.runtime.sendMessage({ unreadUrls: [...unreadUrls] } satisfies ExtensionMessage);
+}
 
 async function handleExtensionWorkerMessage(message: ExtensionMessage) {
   if (message.channelData) {

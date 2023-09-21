@@ -25,6 +25,7 @@
 
 .c-item {
   display: grid;
+  contain: content;
   grid-template-columns: auto 1fr;
   gap: 8px;
   align-items: start;
@@ -35,6 +36,7 @@
 .c-item-icon {
   width: var(--icon-size);
   transform: translateY(calc(calc(var(--line-height) - var(--icon-size)) / 2));
+  display: block;
 }
 
 .c-item-title {

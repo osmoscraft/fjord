@@ -22,7 +22,6 @@ export async function setChannelBookmark(channelData: ChannelData) {
   if (existingBookmark) {
     // new items to be marked as unread
     const unreadUrls = await getAllUnreadUrls();
-    console.log("unread", unreadUrls);
 
     const existingChannelData = await dataUrlToObject<ChannelDataWithUnreadUrls>(existingBookmark.url!);
     const mergedChannelData = mergeBookmark(channelData, existingChannelData, unreadUrls);
@@ -64,11 +63,7 @@ export async function setIsUnread(url: string, isUnread: boolean) {
   );
 }
 
-function isNonNullish<T>(value: T | undefined | null): value is T {
-  return value !== undefined && value !== null;
-}
-
-async function getAllUnreadUrls(): Promise<Set<string>> {
+export async function getAllUnreadUrls(): Promise<Set<string>> {
   const root = await getRoot();
 
   const existingChannelDataList = await Promise.all(
@@ -107,7 +102,7 @@ function mergeBookmark(
   return mergedChannelData;
 }
 
-export async function getRoot() {
+async function getRoot() {
   const root = await browser.bookmarks.create({
     title: "Feed",
     parentId: "1",
