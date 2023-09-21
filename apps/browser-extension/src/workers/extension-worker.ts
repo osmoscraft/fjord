@@ -21,7 +21,7 @@ import type { ExtensionMessage } from "../typings/message";
     <link rel="stylesheet" href="./reader.css" />
   </head>
   <body>
-  ${renderChannels(channels, new Set())}
+  ${renderChannels(channels)}
   </body>
 </html>`;
       console.log("channels", { channels, html });

@@ -1,6 +1,6 @@
 import type { FeedChannel } from "../feed-parser/types";
 
-export function renderChannels(channels: ChannelData[], unreadUrls: Set<string>): string {
+export function renderChannels(channels: ChannelDataWithUnreadUrls[]): string {
   return /*html*/ `<nav class="c-feeds-menu">${groupByDate(channels)
     .map((feedByDate) => {
       return `
@@ -18,7 +18,7 @@ export function renderChannels(channels: ChannelData[], unreadUrls: Set<string>)
                     channel.title
                   }"><img class="c-item-icon" alt="" loading="lazy" src="${getGoogleFaviconUrl(
                     item.url
-                  )}"></a><a href="${item.url}" class="c-item-title" data-unread="${unreadUrls.has(item.url)}">${
+                  )}"></a><a href="${item.url}" class="c-item-title" data-unread="${item.isUnread}">${
                     item.title
                   }</a></article>`
                 )
@@ -40,6 +40,7 @@ interface FeedsByDate {
     items: {
       title: string;
       url: string;
+      isUnread: boolean;
     }[];
   }[];
 }
@@ -54,6 +55,7 @@ interface FlatItem {
   icon: string;
   title: string;
   url: string;
+  isUnread: boolean;
 }
 
 export interface ChannelData extends FeedChannel {
@@ -64,7 +66,7 @@ export interface ChannelDataWithUnreadUrls extends ChannelData {
   unreadUrls: string[];
 }
 
-function groupByDate(channels: ChannelData[]): FeedsByDate[] {
+function groupByDate(channels: ChannelDataWithUnreadUrls[]): FeedsByDate[] {
   const flatItems: FlatItem[] = channels
     .flatMap((channel) =>
       channel.items.map((item) => ({
@@ -77,6 +79,7 @@ function groupByDate(channels: ChannelData[]): FeedsByDate[] {
         icon: getGoogleFaviconUrl(item.url),
         title: item.title,
         url: item.url,
+        isUnread: channel.unreadUrls.includes(item.url),
       }))
     )
     .sort((a, b) => b.date - a.date);
