@@ -5,7 +5,9 @@ export function renderChannels(channels: ChannelDataWithUnreadUrls[]): string {
     .map((feedByDate) => {
       return `
         <fieldset class="c-date-view">
-          <legend class="c-date-title">${new Date(feedByDate.startDate).toLocaleDateString()}</legend>
+          <legend class="c-date-title"><button type="button" class="c-date-toggle" data-action="toggle-daily"><time datetime="${new Date(
+            feedByDate.startDate
+          ).toISOString()}">${new Date(feedByDate.startDate).toLocaleDateString()}</time></button></legend>
           <div class="c-date-content">
           ${feedByDate.channels
             .map((channel) => {

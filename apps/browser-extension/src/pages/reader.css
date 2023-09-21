@@ -7,6 +7,10 @@
   gap: 16px;
 }
 
+.c-date-toggle {
+  padding-inline: 4px;
+}
+
 .c-date-view {
   display: grid;
   gap: 4px;

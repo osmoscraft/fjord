@@ -46,7 +46,14 @@ export async function setChannelBookmark(channelData: ChannelData) {
   }
 }
 
-export async function setIsUnread(url: string, isUnread: boolean) {
+export interface StatusChange {
+  url: string;
+  isUnread: boolean;
+}
+export async function updateStatus(statusChanges: StatusChange[]) {
+  const addUnreadUrls = statusChanges.filter((change) => change.isUnread).map((change) => change.url);
+  const removeUnreadUrls = statusChanges.filter((change) => !change.isUnread).map((change) => change.url);
+
   // iterate over all channels, remove url from unreadUrls
   const root = await getRoot();
   const channelBookmarks = (await browser.bookmarks.getChildren(root.id)).filter((item) => Boolean(item.url));
@@ -55,13 +62,16 @@ export async function setIsUnread(url: string, isUnread: boolean) {
       const channelData = await dataUrlToObject<ChannelDataWithUnreadUrls>(channelBookmark.url!);
       const updatedChannelData = {
         ...channelData,
-        unreadUrls: isUnread
-          ? [...new Set([...channelData.unreadUrls, url])]
-          : channelData.unreadUrls.filter((unreadUrl) => unreadUrl !== url),
+        unreadUrls: [...new Set([...channelData.unreadUrls, ...addUnreadUrls])].filter(
+          (url) => !removeUnreadUrls.includes(url)
+        ),
       };
 
+      const updatedDataUrl = await objectToDataUrl(updatedChannelData);
+      if (updatedDataUrl === channelBookmark.url) return;
+
       await browser.bookmarks.update(channelBookmark.id, {
-        url: await objectToDataUrl(updatedChannelData),
+        url: updatedDataUrl,
       });
     })
   );
