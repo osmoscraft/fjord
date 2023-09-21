@@ -116,7 +116,7 @@ function mergeBookmark(
 function truncateItems(channelData: ChannelDataWithUnreadUrls): ChannelDataWithUnreadUrls {
   const remainingItems = channelData.items
     .filter((item, index, arr) => arr.findIndex((i) => i.url === item.url) === index)
-    .filter((item) => item.timePublished > Date.now() - 1000 * 60 * 60 * 24 * 30) // 30 day old
+    .filter((item) => item.timePublished > Date.now() - 1000 * 60 * 60 * 24 * 60) // 60 day old
     .slice(0, 20); // 20 items per channel
   const remainingUnreadUrls = channelData.unreadUrls.filter((url) => remainingItems.some((item) => item.url === url));
 
