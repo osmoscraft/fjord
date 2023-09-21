@@ -1,5 +1,5 @@
 import browser from "webextension-polyfill";
-import { getChannels, setChannelBookmark } from "../modules/bookmarks";
+import { getChannels, setChannelBookmark, setIsUnread } from "../modules/bookmarks";
 import { setupOffscreenDocument } from "../modules/offscreen";
 import { backgroundPageParameters } from "../modules/parameters";
 import { renderChannels } from "../modules/reader/render-feed";
@@ -57,4 +57,8 @@ async function handleExtensionWorkerMessage(message: ExtensionMessage) {
   }
 }
 
-function handleVisit(result: browser.History.HistoryItem) {}
+function handleVisit(result: browser.History.HistoryItem) {
+  if (!result.url) return;
+  console.log(`[read status] marked as read: ${result.url}`);
+  setIsUnread(result.url, false);
+}

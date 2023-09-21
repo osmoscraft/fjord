@@ -3,26 +3,18 @@ import { dataUrlToObject, objectToDataUrl } from "./codec";
 import type { ChannelData, ChannelDataWithUnreadUrls } from "./reader/render-feed";
 
 export async function getChannels(): Promise<ChannelDataWithUnreadUrls[]> {
-  const root = await browser.bookmarks.create({
-    title: "Feed",
-    parentId: "1",
-  });
-
-  const channelFolders = (await browser.bookmarks.getChildren(root.id)).filter((item) => Boolean(item.url));
+  const root = await getRoot();
+  const channelBookmarks = (await browser.bookmarks.getChildren(root.id)).filter((item) => Boolean(item.url));
 
   const channels = await Promise.all(
-    channelFolders.map((channelFolder) => dataUrlToObject<ChannelDataWithUnreadUrls>(channelFolder.url!))
+    channelBookmarks.map((channelBookmark) => dataUrlToObject<ChannelDataWithUnreadUrls>(channelBookmark.url!))
   );
 
   return channels;
 }
 
 export async function setChannelBookmark(channelData: ChannelData) {
-  const root = await browser.bookmarks.create({
-    title: "Feed",
-    parentId: "1",
-  });
-
+  const root = await getRoot();
   const existingBookmark = (await browser.bookmarks.getChildren(root.id)).find(
     (child) => child.title === channelData.url
   );
@@ -51,21 +43,25 @@ export async function setChannelBookmark(channelData: ChannelData) {
   }
 }
 
-export async function markAsSeen(url: string) {
-  const root = await browser.bookmarks.create({
-    title: "Feed",
-    parentId: "1",
-  });
+export async function setIsUnread(url: string, isUnread: boolean) {
+  // iterate over all channels, remove url from unreadUrls
+  const root = await getRoot();
+  const channelBookmarks = (await browser.bookmarks.getChildren(root.id)).filter((item) => Boolean(item.url));
+  await Promise.all(
+    channelBookmarks.map(async (channelBookmark) => {
+      const channelData = await dataUrlToObject<ChannelDataWithUnreadUrls>(channelBookmark.url!);
+      const updatedChannelData = {
+        ...channelData,
+        unreadUrls: isUnread
+          ? [...new Set([...channelData.unreadUrls, url])]
+          : channelData.unreadUrls.filter((unreadUrl) => unreadUrl !== url),
+      };
 
-  const channelFolders = (await browser.bookmarks.getSubTree(root.id)).at(0)?.children ?? [];
-  const pageMatches = channelFolders
-    .map((channel) => channel.children?.find((child) => child.url === url))
-    .filter(isNonNullish);
-
-  const foundId = pageMatches.at(0)?.id;
-  if (foundId) {
-    await browser.bookmarks.remove(foundId);
-  }
+      await browser.bookmarks.update(channelBookmark.id, {
+        url: await objectToDataUrl(updatedChannelData),
+      });
+    })
+  );
 }
 
 function isNonNullish<T>(value: T | undefined | null): value is T {
@@ -73,10 +69,7 @@ function isNonNullish<T>(value: T | undefined | null): value is T {
 }
 
 async function getAllUnreadUrls(): Promise<Set<string>> {
-  const root = await browser.bookmarks.create({
-    title: "Feed",
-    parentId: "1",
-  });
+  const root = await getRoot();
 
   const existingChannelDataList = await Promise.all(
     (
@@ -112,4 +105,13 @@ function mergeBookmark(
   };
 
   return mergedChannelData;
+}
+
+export async function getRoot() {
+  const root = await browser.bookmarks.create({
+    title: "Feed",
+    parentId: "1",
+  });
+
+  return root;
 }
