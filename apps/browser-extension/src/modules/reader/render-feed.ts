@@ -60,6 +60,10 @@ export interface ChannelData extends FeedChannel {
   url: string;
 }
 
+export interface ChannelDataWithUnreadUrls extends ChannelData {
+  unreadUrls: string[];
+}
+
 function groupByDate(channels: ChannelData[]): FeedsByDate[] {
   const flatItems: FlatItem[] = channels
     .flatMap((channel) =>
