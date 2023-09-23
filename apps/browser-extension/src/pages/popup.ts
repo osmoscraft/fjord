@@ -1,4 +1,5 @@
 import browser from "webextension-polyfill";
+import { getParsedConfig } from "../modules/config/config";
 import type { ExtensionMessage } from "../typings/message";
 import "./popup.css";
 
@@ -22,6 +23,7 @@ document.body.addEventListener("click", async (e) => {
   }
 
   if (action === "fetch") {
-    browser.runtime.sendMessage({ fetchAll: true } satisfies ExtensionMessage);
+    const config = await getParsedConfig();
+    browser.runtime.sendMessage({ fetchAll: config } satisfies ExtensionMessage);
   }
 });

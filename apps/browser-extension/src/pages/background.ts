@@ -1,5 +1,4 @@
 import browser from "webextension-polyfill";
-import { getRawConfig, parseConfig } from "../modules/config/config";
 import { parseXmlFeed } from "../modules/feed-parser/parse";
 import type { ChannelData } from "../modules/reader/render-feed";
 import type { ExtensionMessage } from "../typings/message";
@@ -15,10 +14,7 @@ async function handleExtensionMessage(
   _sendResponse: (...args: any) => any
 ) {
   if (message.fetchAll) {
-    const rawConfig = getRawConfig();
-    if (!rawConfig) throw new Error("missing config");
-
-    const config = parseConfig(rawConfig);
+    const config = message.fetchAll;
 
     const results = await Promise.allSettled(
       config.channels.map(async (channel) =>

@@ -1,14 +1,16 @@
+import browser from "webextension-polyfill";
 import { parse } from "yaml";
+import { decompressString } from "../compression";
 import type { Config } from "./type";
 
-export function setRawConfig(config: string) {
-  localStorage.setItem("config", config);
+export async function getRawConfig() {
+  const configString = await browser.storage.sync.get(["config"]).then((result) => result.config as string);
+  if (!configString) throw new Error("missing config");
+  const yamlString = await decompressString(configString);
+  return yamlString;
 }
 
-export function getRawConfig() {
-  return localStorage.getItem("config");
-}
-
-export function parseConfig(raw: string) {
-  return parse(raw) as Config;
+export async function getParsedConfig(): Promise<Config> {
+  const yamlString = await getRawConfig();
+  return parse(yamlString);
 }

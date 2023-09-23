@@ -1,4 +1,5 @@
 import browser from "webextension-polyfill";
+import { getParsedConfig } from "../modules/config/config";
 import { setupOffscreenDocument } from "../modules/offscreen";
 import { backgroundPageParameters } from "../modules/parameters";
 import { renderCommandBar } from "../modules/reader/render-command-bar";
@@ -18,12 +19,14 @@ function handleExtensionMessage(message: ExtensionMessage) {
 
 async function handleExtensionInstall() {
   await setupOffscreenDocument(backgroundPageParameters);
-  browser.runtime.sendMessage({ fetchAll: true } satisfies ExtensionMessage);
+  const config = await getParsedConfig();
+  browser.runtime.sendMessage({ fetchAll: config } satisfies ExtensionMessage);
 }
 
 async function handleBrowserStart() {
   await setupOffscreenDocument(backgroundPageParameters);
-  browser.runtime.sendMessage({ fetchAll: true } satisfies ExtensionMessage);
+  const config = await getParsedConfig();
+  browser.runtime.sendMessage({ fetchAll: config } satisfies ExtensionMessage);
 }
 
 function handleFetchEvent(event: FetchEvent) {

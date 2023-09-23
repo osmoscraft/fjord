@@ -18,9 +18,9 @@ export function renderChannels(channels: ChannelData[]): string {
                   (item) => `<article class="c-item">
                     <a href="${channel.homeUrl}" title="${
                     channel.title
-                  }"><img class="c-item-icon" alt="" src="${getGoogleFaviconUrl(item.url)}"></a><a href="${
+                  }"><img class="c-item-icon" alt="" loading="lazy" src="${getGoogleFaviconUrl(
                     item.url
-                  }" class="c-item-title">${item.title}</a></article>`
+                  )}"></a><a href="${item.url}" class="c-item-title">${item.title}</a></article>`
                 )
                 .join("");
             })

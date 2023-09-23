@@ -1,8 +1,11 @@
 import browser from "webextension-polyfill";
-import { blobToDataUrl, compress, dataUrlToBase64 } from "../modules/compression";
-import { getRawConfig, parseConfig, setRawConfig } from "../modules/config/config";
+import { parse } from "yaml";
+import { compressString } from "../modules/compression";
+// import { getRawConfig, parseConfig, setRawConfig } from "../modules/config/config";
+import { getParsedConfig, getRawConfig } from "../modules/config/config";
 import example from "../modules/config/example.yaml";
 import { teardownOffscreenDocument } from "../modules/offscreen";
+import type { ExtensionMessage } from "../typings/message";
 import "./options.css";
 
 const form = document.querySelector("form")!;
@@ -12,8 +15,7 @@ const syncUsage = document.querySelector<HTMLMeterElement>("#sync-usage")!;
 const localStats = document.querySelector<HTMLSpanElement>("#local-stats")!;
 const syncStats = document.querySelector<HTMLSpanElement>("#sync-stats")!;
 
-textarea.value = getInitalConfig();
-validate();
+getRawConfig().then((value) => (textarea.value = value));
 
 reportStorageUsage();
 browser.storage.onChanged.addListener(reportStorageUsage);
@@ -41,12 +43,16 @@ function reportStorageUsage() {
 document.body.addEventListener("click", async (e) => {
   const action = (e.target as HTMLElement)?.closest("[data-action]")?.getAttribute("data-action");
 
+  if (action === "fetch") {
+    const config = await getParsedConfig();
+    browser.runtime.sendMessage({ fetchAll: config } satisfies ExtensionMessage);
+  }
+
   if (action === "save") {
     if (!validate()) return;
 
-    const blob = new Blob([getRawConfig() ?? ""], { type: "text/yaml" });
-    const compressedString = dataUrlToBase64(await compress(blob).then(blobToDataUrl));
-    browser.storage.sync.set({ config: compressedString });
+    const compressed = await compressString(textarea.value);
+    browser.storage.sync.set({ config: compressed });
   }
 
   if (action === "validate") {
@@ -58,7 +64,7 @@ document.body.addEventListener("click", async (e) => {
   }
 
   if (action === "example") {
-    setRawConfig(example);
+    textarea.value = example;
     location.reload();
   }
 
@@ -72,16 +78,10 @@ document.body.addEventListener("click", async (e) => {
 });
 
 form.addEventListener("submit", (e) => e.preventDefault());
-textarea.addEventListener("input", () => setRawConfig(textarea.value));
-
-function getInitalConfig() {
-  const existing = getRawConfig();
-  return existing !== null ? existing : example;
-}
 
 function validate() {
   try {
-    parseConfig(getRawConfig() ?? "");
+    parse(textarea.value);
     textarea.setCustomValidity("");
     return textarea.reportValidity();
   } catch (e) {
