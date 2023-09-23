@@ -1,6 +1,6 @@
 {
   "name": "Fjord",
-  "description": "Mirror feed into bookmarks",
+  "description": "RSS reader for the web",
   "version": "0.0.1",
   "manifest_version": 3,
   "action": {
