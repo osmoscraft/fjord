@@ -1,13 +1,13 @@
 import type { FeedChannel } from "../feed-parser/types";
 
-export function renderChannels(channels: ChannelDataWithUnreadUrls[]): string {
+export function renderChannels(channels: ChannelData[]): string {
   return /*html*/ `<nav class="c-feeds-menu">${groupByDate(channels)
     .map((feedByDate) => {
       return `
         <fieldset class="c-date-view">
-          <legend class="c-date-title"><button type="button" class="c-date-toggle" data-action="toggle-daily"><time datetime="${new Date(
-            feedByDate.startDate
-          ).toISOString()}">${new Date(feedByDate.startDate).toLocaleDateString()}</time></button></legend>
+          <legend class="c-date-title"><time datetime="${new Date(feedByDate.startDate).toISOString()}">${new Date(
+        feedByDate.startDate
+      ).toLocaleDateString()}</time></legend>
           <div class="c-date-content">
           ${feedByDate.channels
             .map((channel) => {
@@ -20,9 +20,7 @@ export function renderChannels(channels: ChannelDataWithUnreadUrls[]): string {
                     channel.title
                   }"><img class="c-item-icon" alt="" loading="lazy" src="${getGoogleFaviconUrl(
                     item.url
-                  )}"></a><a href="${item.url}" class="c-item-title" data-unread="${item.isUnread}">${
-                    item.title
-                  }</a></article>`
+                  )}"></a><a href="${item.url}" class="c-item-title">${item.title}</a></article>`
                 )
                 .join("");
             })
@@ -42,7 +40,6 @@ interface FeedsByDate {
     items: {
       title: string;
       url: string;
-      isUnread: boolean;
     }[];
   }[];
 }
@@ -57,18 +54,13 @@ interface FlatItem {
   icon: string;
   title: string;
   url: string;
-  isUnread: boolean;
 }
 
 export interface ChannelData extends FeedChannel {
   url: string;
 }
 
-export interface ChannelDataWithUnreadUrls extends ChannelData {
-  unreadUrls: string[];
-}
-
-function groupByDate(channels: ChannelDataWithUnreadUrls[]): FeedsByDate[] {
+function groupByDate(channels: ChannelData[]): FeedsByDate[] {
   const flatItems: FlatItem[] = channels
     .flatMap((channel) =>
       channel.items.map((item) => ({
@@ -81,7 +73,6 @@ function groupByDate(channels: ChannelDataWithUnreadUrls[]): FeedsByDate[] {
         icon: getGoogleFaviconUrl(item.url),
         title: item.title,
         url: item.url,
-        isUnread: channel.unreadUrls.includes(item.url),
       }))
     )
     .sort((a, b) => b.date - a.date);

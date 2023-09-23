@@ -1,15 +1,52 @@
 import browser from "webextension-polyfill";
-import { getAllUnreadUrls, getChannels, setChannelBookmark, updateStatus } from "../modules/bookmarks";
 import { setupOffscreenDocument } from "../modules/offscreen";
 import { backgroundPageParameters } from "../modules/parameters";
-import { renderChannels } from "../modules/reader/render-feed";
+import { renderCommandBar } from "../modules/reader/render-command-bar";
+import { renderChannels, type ChannelData } from "../modules/reader/render-feed";
 import type { ExtensionMessage } from "../typings/message";
 
-(globalThis.self as any as ServiceWorkerGlobalScope).addEventListener("fetch", (event) => {
+browser.runtime.onMessage.addListener(handleExtensionMessage);
+browser.runtime.onInstalled.addListener(handleExtensionInstall);
+browser.runtime.onStartup.addListener(handleBrowserStart);
+(globalThis.self as any as ServiceWorkerGlobalScope).addEventListener("fetch", handleFetchEvent);
+browser.storage.local.onChanged.addListener(handleStorageChange);
+
+reportStorageUsage();
+
+function handleExtensionMessage(message: ExtensionMessage) {
+  if (message.channels) {
+    browser.storage.local.set({ channelsCache: message.channels });
+  }
+}
+
+function handleStorageChange(_changes: Record<string, browser.Storage.StorageChange>) {
+  reportStorageUsage();
+}
+
+function reportStorageUsage() {
+  (browser.storage.local as any)
+    .getBytesInUse()
+    .then((bytes: any) =>
+      console.log(`Storage usage ${((100 * bytes) / browser.storage.local.QUOTA_BYTES).toFixed(2)}%`)
+    );
+}
+
+function handleExtensionInstall() {
+  return setupOffscreenDocument(backgroundPageParameters);
+}
+
+function handleBrowserStart() {
+  return setupOffscreenDocument(backgroundPageParameters);
+}
+
+function handleFetchEvent(event: FetchEvent) {
   const requestUrl = new URL(event.request.url);
   if (requestUrl.pathname === "/reader.html") {
     const responseAsync = new Promise<Response>(async (resolve) => {
-      const channels = await getChannels();
+      const channels = await browser.storage.local
+        .get(["channelsCache"])
+        .then((result) => (result.channelsCache ?? []) as ChannelData[]);
+
       const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -21,48 +58,15 @@ import type { ExtensionMessage } from "../typings/message";
     <link rel="stylesheet" href="./reader.css" />
   </head>
   <body>
+    ${renderCommandBar()}
     ${renderChannels(channels)}
     <script type="module" src="./reader.js"></script>
   </body>
 </html>`;
-      console.log("channels", { channels, html });
+
       resolve(new Response(html, { headers: { "Content-Type": "text/html" } }));
     });
 
     event.respondWith(responseAsync);
   }
-});
-
-browser.runtime.onInstalled.addListener(handleExtensionInstall);
-browser.runtime.onStartup.addListener(handleBrowserStart);
-browser.runtime.onMessage.addListener(handleExtensionWorkerMessage);
-browser.bookmarks.onChanged.addListener(handleBookmarksChange);
-browser.bookmarks.onRemoved.addListener(handleBookmarksChange);
-browser.bookmarks.onCreated.addListener(handleBookmarksChange);
-browser.bookmarks.onMoved.addListener(handleBookmarksChange);
-browser.history.onVisited.addListener(handleVisit);
-
-function handleExtensionInstall() {
-  return setupOffscreenDocument(backgroundPageParameters);
-}
-
-function handleBrowserStart() {
-  return setupOffscreenDocument(backgroundPageParameters);
-}
-
-async function handleBookmarksChange() {
-  const unreadUrls = await getAllUnreadUrls();
-  browser.runtime.sendMessage({ unreadUrls: [...unreadUrls] } satisfies ExtensionMessage);
-}
-
-async function handleExtensionWorkerMessage(message: ExtensionMessage) {
-  if (message.channelData) {
-    setChannelBookmark(message.channelData);
-  }
-}
-
-function handleVisit(result: browser.History.HistoryItem) {
-  if (!result.url) return;
-  console.log(`[read status] marked as read: ${result.url}`);
-  updateStatus([{ url: result.url, isUnread: false }]);
 }

@@ -2,6 +2,6 @@ import type { ChannelData } from "../modules/reader/render-feed";
 
 export type ExtensionMessage = {
   fetchAll?: boolean;
-  channelData?: ChannelData;
-  unreadUrls?: string[];
+  channels?: ChannelData[];
+  getChannels?: boolean;
 };

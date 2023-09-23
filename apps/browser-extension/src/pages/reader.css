@@ -52,8 +52,4 @@
   &:hover {
     text-decoration: underline;
   }
-
-  &[data-unread="true"] {
-    font-weight: bold;
-  }
 }
