@@ -1,10 +1,5 @@
 channels:
-  - url: https://css-tricks.com/feed/
-  - url: https://www.smashingmagazine.com/feed/
-  - url: https://github.com/readme.rss
-  - url: https://feeds.feedburner.com/logodesignlove
-  - url: https://blog.rust-lang.org/feed.xml
-  - url: https://www.figma.com/blog/feed/atom.xml
   - url: https://developer.chrome.com/feeds/blog.xml
   - url: https://webkit.org/feed/atom/
   - url: https://hacks.mozilla.org/feed/
+  - url: https://blogs.windows.com/msedgedev/feed/

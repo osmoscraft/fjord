@@ -1,7 +1,7 @@
 import type { FeedChannel } from "../feed-parser/types";
 
 const maxItemsPerChannel = 60;
-const maxAgeInDays = 30;
+const maxAgeInDays = 60; // Chrome will delete history older than 90 days
 
 export function renderChannels(channels: ChannelData[]): string {
   return /*html*/ `<nav class="c-feeds-menu">${groupByDate(channels)
