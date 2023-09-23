@@ -10,7 +10,17 @@ import type { ExtensionMessage } from "../typings/message";
 browser.runtime.onMessage.addListener(handleExtensionMessage);
 browser.runtime.onInstalled.addListener(handleExtensionInstall);
 browser.runtime.onStartup.addListener(handleBrowserStart);
+browser.storage.sync.onChanged.addListener(handleSyncStorageChange);
 (globalThis.self as any as ServiceWorkerGlobalScope).addEventListener("fetch", handleFetchEvent);
+
+function handleSyncStorageChange(e: browser.Storage.StorageAreaSyncOnChangedChangesType) {
+  console.log(`[worker] config changed, will refetch`);
+  getParsedConfig()
+    .then((parsedConfig) => {
+      browser.runtime.sendMessage({ fetchAll: parsedConfig } satisfies ExtensionMessage);
+    })
+    .catch((e) => console.error(`[worker] error reading config, skip refetch`, e));
+}
 
 async function handleExtensionMessage(message: ExtensionMessage) {
   if (message.channels) {

@@ -5,7 +5,6 @@ import placeholderYaml from "../modules/config/placeholder.yaml";
 // import { getRawConfig, parseConfig, setRawConfig } from "../modules/config/config";
 import { getRawConfig, parseConfig } from "../modules/config/config";
 import { teardownOffscreenDocument } from "../modules/offscreen";
-import type { ExtensionMessage } from "../typings/message";
 import "./options.css";
 
 const form = document.querySelector("form")!;
@@ -60,7 +59,6 @@ document.body.addEventListener("click", async (e) => {
     const validConfig = getValidConfig();
     if (!validConfig) return;
 
-    browser.runtime.sendMessage({ fetchAll: validConfig } satisfies ExtensionMessage);
     const compressed = await compressString(myConfig.value);
     browser.storage.sync.set({ config: compressed });
 
@@ -71,7 +69,6 @@ document.body.addEventListener("click", async (e) => {
     const validConfig = getValidConfig();
     if (!validConfig) return;
 
-    browser.runtime.sendMessage({ fetchAll: validConfig } satisfies ExtensionMessage);
     const compressed = await compressString(myConfig.value);
     browser.storage.sync.set({ config: compressed });
   }

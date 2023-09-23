@@ -3,10 +3,12 @@ import { getParsedConfig } from "../modules/config/config";
 import type { ExtensionMessage } from "../typings/message";
 import "./reader.css";
 
-browser.storage.local.onChanged.addListener(() => location.reload());
+// To ensure the latest feed cache is rendered, we handle two possible scenarios:
+// 1. Background is not fetching -> cache must be up-to-date -> fetchCacheNewerThan will return latest
+// 2. Background is fetching -> channels event will eventually fire -> channels event will trigger a reload
+
 browser.runtime.sendMessage({ fetchCacheNewerThan: getChannelsUpdatedAt() } satisfies ExtensionMessage);
 browser.runtime.onMessage.addListener(handleExtensionMessage);
-
 document.body.addEventListener("click", handleClickEvent);
 
 const status = document.querySelector<HTMLSpanElement>("#status")!;
@@ -72,5 +74,9 @@ function getChannelsUpdatedAt() {
 function handleExtensionMessage(e: ExtensionMessage) {
   if (e.status !== undefined) {
     status.textContent = e.status;
+  }
+
+  if (e.channels !== undefined) {
+    location.reload();
   }
 }
