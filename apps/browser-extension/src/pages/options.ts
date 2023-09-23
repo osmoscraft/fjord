@@ -17,6 +17,10 @@ document.body.addEventListener("click", async (e) => {
     validate();
   }
 
+  if (action === "clear") {
+    browser.storage.local.clear();
+  }
+
   if (action === "example") {
     setRawConfig(example);
     location.reload();
