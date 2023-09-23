@@ -1,21 +1,23 @@
 import browser from "webextension-polyfill";
-import { parse } from "yaml";
 import { compressString } from "../modules/compression";
+import exampleYaml from "../modules/config/example.yaml";
 // import { getRawConfig, parseConfig, setRawConfig } from "../modules/config/config";
-import { getParsedConfig, getRawConfig } from "../modules/config/config";
-import example from "../modules/config/example.yaml";
+import { getRawConfig, parseConfig } from "../modules/config/config";
 import { teardownOffscreenDocument } from "../modules/offscreen";
 import type { ExtensionMessage } from "../typings/message";
 import "./options.css";
 
 const form = document.querySelector("form")!;
-const textarea = document.querySelector("textarea")!;
+const myConfig = document.querySelector<HTMLTextAreaElement>("#my-config")!;
 const localUsage = document.querySelector<HTMLMeterElement>("#local-usage")!;
 const syncUsage = document.querySelector<HTMLMeterElement>("#sync-usage")!;
 const localStats = document.querySelector<HTMLSpanElement>("#local-stats")!;
 const syncStats = document.querySelector<HTMLSpanElement>("#sync-stats")!;
+const examples = document.querySelector<HTMLDivElement>("#examples-container")!;
+const exampleConfig = document.querySelector<HTMLTextAreaElement>("#example-config")!;
 
-getRawConfig().then((value) => (textarea.value = value));
+getRawConfig().then((value) => (myConfig.value = value));
+exampleConfig.value = exampleYaml;
 
 reportStorageUsage();
 browser.storage.onChanged.addListener(reportStorageUsage);
@@ -43,28 +45,28 @@ function reportStorageUsage() {
 document.body.addEventListener("click", async (e) => {
   const action = (e.target as HTMLElement)?.closest("[data-action]")?.getAttribute("data-action");
 
-  if (action === "open-reader") {
+  if (action === "save-and-read") {
+    const validConfig = getValidConfig();
+    if (!validConfig) return;
+
+    browser.runtime.sendMessage({ fetchAll: validConfig } satisfies ExtensionMessage);
+    const compressed = await compressString(myConfig.value);
+    browser.storage.sync.set({ config: compressed });
+
     location.assign(browser.runtime.getURL("reader.html"));
   }
 
-  if (action === "fetch") {
-    const config = await getParsedConfig();
-    browser.runtime.sendMessage({ fetchAll: config } satisfies ExtensionMessage);
-  }
-
   if (action === "save") {
-    if (!validate()) return;
+    const validConfig = getValidConfig();
+    if (!validConfig) return;
 
-    const compressed = await compressString(textarea.value);
+    browser.runtime.sendMessage({ fetchAll: validConfig } satisfies ExtensionMessage);
+    const compressed = await compressString(myConfig.value);
     browser.storage.sync.set({ config: compressed });
   }
 
   if (action === "clear") {
     browser.storage.local.clear();
-  }
-
-  if (action === "example") {
-    textarea.value = example;
   }
 
   if (action === "reset-background") {
@@ -74,18 +76,27 @@ document.body.addEventListener("click", async (e) => {
   if (action === "reset-extension") {
     browser.runtime.reload();
   }
+
+  if (action === "toggle-examples") {
+    examples.hidden = !examples.hidden;
+  }
 });
 
 form.addEventListener("submit", (e) => e.preventDefault());
 
-function validate() {
+function getValidConfig() {
   try {
-    parse(textarea.value);
-    textarea.setCustomValidity("");
-    return textarea.reportValidity();
+    const parsed = parseConfig(myConfig.value);
+    myConfig.setCustomValidity("");
+    if (!myConfig.reportValidity()) {
+      return null;
+    }
+
+    return parsed;
   } catch (e) {
-    textarea.setCustomValidity(getErrorMessage(e));
-    return textarea.reportValidity();
+    myConfig.setCustomValidity(getErrorMessage(e));
+    myConfig.reportValidity();
+    return null;
   }
 }
 

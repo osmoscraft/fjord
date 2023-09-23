@@ -7,8 +7,6 @@ body {
 }
 
 menu {
-  padding: 4px 8px;
-
   & button {
     padding-inline: 8px;
   }
@@ -29,7 +27,6 @@ button {
 
 .c-date-view {
   display: grid;
-  padding-inline: 8px;
   padding-block: 4px;
   border: none;
 }

@@ -8,12 +8,14 @@ body {
 
 form {
   display: grid;
+  gap: 16px;
 }
 
 textarea {
   padding: 4px;
   height: 400px;
   font-family: monospace;
+  resize: vertical;
 }
 
 textarea:invalid {
@@ -22,4 +24,31 @@ textarea:invalid {
 
 button {
   padding-inline: 8px;
+}
+
+.c-two-panels {
+  display: grid;
+  grid-auto-flow: column;
+}
+
+.c-field {
+  display: grid;
+  gap: 4px;
+  align-content: start;
+}
+
+.c-field[hidden] {
+  display: none;
+}
+
+fieldset {
+  display: grid;
+  gap: 8px;
+  padding-block: 4px;
+  border: none;
+}
+
+legend {
+  font-weight: bold;
+  font-size: 20px;
 }

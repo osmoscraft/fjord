@@ -9,38 +9,65 @@
   </head>
   <body>
     <form id="config-form">
-      <menu>
-        <button data-action="open-reader" type="button">Open reader</button>
-        <button data-action="fetch" type="button">Fetch</button>
-        <button data-action="save" type="button">Save</button>
-        <button data-action="example" type="button">Use example</button>
-        <details>
-          <summary>Developer tools</summary>
-          <button data-action="clear" type="button">Clear cache</button>
+      <fieldset open>
+        <legend>Channels</legend>
+        <menu>
+          <button data-action="save-and-read" type="button">Save and read</button>
+          <button data-action="save" type="button">Save</button>
+          <button data-action="toggle-examples" type="button">Toggle examples</button>
+        </menu>
+        <div class="c-two-panels">
+          <div class="c-field">
+            <label for="my-config">My config</label>
+            <textarea
+              id="my-config"
+              name="config-file"
+              spellcheck="false"
+              autocorrect="off"
+              autocapitalize="off"
+              translate="no"
+              required
+            ></textarea>
+          </div>
+          <div hidden id="examples-container" class="c-field">
+            <label for="example-config">Example config</label>
+            <textarea id="example-config" readonly></textarea>
+          </div>
+        </div>
+        <div>
+          <div class="c-field">
+            <label for="sync-usage">Config storage space</label>
+            <div>
+              <meter id="sync-usage" min="0"></meter>
+              <span id="sync-stats"></span>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset open>
+        <legend>Feed cache</legend>
+        <menu>
+          <button data-action="clear" type="button">Clear feed cache</button>
+        </menu>
+        <div>
+          <div class="c-field">
+            <label for="local-usage">Feed storage space</label>
+            <div>
+              <meter id="local-usage" min="0"></meter>
+              <span id="local-stats"></span>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Developer tools</legend>
+        <menu>
           <button data-action="reset-background" type="button">Reset background</button>
           <button data-action="reset-extension" type="button">Reset extension</button>
-        </details>
-      </menu>
-      <label for="config-file">Config file</label>
-      <textarea
-        id="config-file"
-        name="config-file"
-        spellcheck="false"
-        autocorrect="off"
-        autocapitalize="off"
-        translate="no"
-      ></textarea>
+        </menu>
+      </fieldset>
     </form>
-    <div>
-      <label for="local-usage">Feed storage</label>
-      <meter id="local-usage" min="0"></meter>
-      <span id="local-stats"></span>
-    </div>
-    <div>
-      <label for="sync-usage">Config storage</label>
-      <meter id="sync-usage" min="0"></meter>
-      <span id="sync-stats"></span>
-    </div>
+
     <script type="module" src="./options.js"></script>
   </body>
 </html>

@@ -49,7 +49,7 @@ function renderLocalDate(rawDate: number) {
     day: "numeric",
   });
 
-  return `<span class="c-day-of-week">${weekday}<span><span class="c-month-day">${date}</span>`;
+  return `<span class="c-day-of-week">${weekday}<span> <span class="c-month-day">${date}</span>`;
 }
 
 interface FeedsByDate {

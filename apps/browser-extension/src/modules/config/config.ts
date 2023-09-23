@@ -14,3 +14,7 @@ export async function getParsedConfig(): Promise<Config> {
   const yamlString = await getRawConfig();
   return parse(yamlString);
 }
+
+export function parseConfig(yamlString: string): Config {
+  return parse(yamlString);
+}
