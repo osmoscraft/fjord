@@ -1,6 +1,2 @@
-- POC: Test bookmark bar item url length limit (brute force max length js)
-- Bug: Race condition when open multiple in quick succession
-- Perf: Slow status toggle
-- Perf: Use in-memory cache to manage all read status
-- Feature: Add "fetch" and "manage" button
-- i18n: get locale from background page
+- feature: Scan current page for possible feed urls
+- improve: get locale from background page
