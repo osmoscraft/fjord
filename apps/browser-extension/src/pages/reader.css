@@ -2,22 +2,27 @@
 @import "../styles/theme.css";
 @import "../styles/override.css";
 
-body {
-  margin: 8px;
-}
-
 menu {
   & button {
     padding-inline: 8px;
   }
 }
 
-menu + nav {
-  margin-top: 4px;
-}
-
 button {
   padding-inline: 8px;
+}
+
+nav {
+  margin: 8px;
+}
+
+.c-command-bar {
+  position: sticky;
+  top: 0;
+  padding: 8px;
+  border-bottom: 1px solid currentColor;
+  z-index: 1;
+  background-color: black;
 }
 
 .c-feeds-menu {
