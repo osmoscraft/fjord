@@ -1,5 +1,8 @@
 import type { FeedChannel } from "../feed-parser/types";
 
+const maxItemsPerChannel = 60;
+const maxAgeInDays = 30;
+
 export function renderChannels(channels: ChannelData[]): string {
   return /*html*/ `<nav class="c-feeds-menu">${groupByDate(channels)
     .map((feedByDate) => {
@@ -81,17 +84,20 @@ export interface ChannelData extends FeedChannel {
 function groupByDate(channels: ChannelData[]): FeedsByDate[] {
   const flatItems: FlatItem[] = channels
     .flatMap((channel) =>
-      channel.items.map((item) => ({
-        date: getStartOfDayDate(item.timePublished),
-        channel: {
-          url: channel.url,
-          title: channel.title,
-          homeUrl: channel.homeUrl ?? item.url,
-        },
-        icon: getGoogleFaviconUrl(item.url),
-        title: item.title,
-        url: item.url,
-      }))
+      channel.items
+        .filter((item) => item.timePublished > Date.now() - maxAgeInDays * 24 * 60 * 60 * 1000)
+        .slice(0, maxItemsPerChannel)
+        .map((item) => ({
+          date: getStartOfDayDate(item.timePublished),
+          channel: {
+            url: channel.url,
+            title: channel.title,
+            homeUrl: channel.homeUrl ?? item.url,
+          },
+          icon: getGoogleFaviconUrl(item.url),
+          title: item.title,
+          url: item.url,
+        }))
     )
     .sort((a, b) => b.date - a.date);
 
