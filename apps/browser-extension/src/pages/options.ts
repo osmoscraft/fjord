@@ -43,6 +43,10 @@ function reportStorageUsage() {
 document.body.addEventListener("click", async (e) => {
   const action = (e.target as HTMLElement)?.closest("[data-action]")?.getAttribute("data-action");
 
+  if (action === "open-reader") {
+    location.assign(browser.runtime.getURL("reader.html"));
+  }
+
   if (action === "fetch") {
     const config = await getParsedConfig();
     browser.runtime.sendMessage({ fetchAll: config } satisfies ExtensionMessage);

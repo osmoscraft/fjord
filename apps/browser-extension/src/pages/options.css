@@ -2,6 +2,10 @@
 @import "../styles/theme.css";
 @import "../styles/override.css";
 
+body {
+  margin: 8px;
+}
+
 form {
   display: grid;
 }
@@ -14,4 +18,8 @@ textarea {
 
 textarea:invalid {
   border: 1px solid red;
+}
+
+button {
+  padding-inline: 8px;
 }

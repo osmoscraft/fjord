@@ -8,9 +8,9 @@ export function renderChannels(channels: ChannelData[]): string {
     .map((feedByDate) => {
       return `
         <fieldset class="c-date-view">
-          <legend class="c-date-title"><time datetime="${feedByDate.startDate}">${renderLocalDate(
-        feedByDate.startDate
-      )}</time></legend>
+          <legend class="c-date-title"><button data-action="toggle-date-visit"><time datetime="${
+            feedByDate.startDate
+          }">${renderLocalDate(feedByDate.startDate)}</time></button></legend>
           <div class="c-date-content">
           ${feedByDate.channels
             .map((channel) => {
@@ -23,7 +23,7 @@ export function renderChannels(channels: ChannelData[]): string {
                     channel.title
                   }"><img class="c-item-icon" alt="" loading="lazy" src="${getGoogleFaviconUrl(
                     item.url
-                  )}"></a><a href="${item.url}" class="c-item-title">${item.title}</a></article>`
+                  )}"></a><a href="${item.url}" class="c-item-title js-visit-target">${item.title}</a></article>`
                 )
                 .join("");
             })

@@ -7,7 +7,7 @@ body {
 }
 
 menu {
-  padding: 4px;
+  padding: 4px 8px;
 
   & button {
     padding-inline: 8px;
@@ -16,6 +16,10 @@ menu {
 
 menu + nav {
   margin-top: 4px;
+}
+
+button {
+  padding-inline: 8px;
 }
 
 .c-feeds-menu {

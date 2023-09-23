@@ -26,5 +26,5 @@
     "open_in_tab": true
   },
   "host_permissions": ["https://*/*", "http://*/*"],
-  "permissions": ["offscreen", "storage"]
+  "permissions": ["offscreen", "storage", "history"]
 }
