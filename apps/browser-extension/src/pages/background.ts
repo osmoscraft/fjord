@@ -3,10 +3,7 @@ import { parseXmlFeed } from "../modules/feed-parser/parse";
 import type { ChannelData } from "../modules/reader/render-feed";
 import type { ExtensionMessage } from "../typings/message";
 
-browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  handleExtensionMessage(message, _sender, sendResponse);
-  return true;
-});
+browser.runtime.onMessage.addListener(handleExtensionMessage);
 
 async function handleExtensionMessage(
   message: ExtensionMessage,

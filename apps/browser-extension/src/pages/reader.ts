@@ -4,8 +4,10 @@ import type { ExtensionMessage } from "../typings/message";
 import "./reader.css";
 
 browser.storage.local.onChanged.addListener(() => location.reload());
+browser.runtime.sendMessage({ fetchCacheNewerThan: getChannelsUpdatedAt() } satisfies ExtensionMessage);
+document.body.addEventListener("click", handleClickEvent);
 
-document.body.addEventListener("click", async (e) => {
+async function handleClickEvent(e: MouseEvent) {
   const action = (e.target as HTMLElement)?.closest("[data-action]")?.getAttribute("data-action");
 
   if (action === "options") {
@@ -51,4 +53,14 @@ document.body.addEventListener("click", async (e) => {
 
     relatedUrlList.map((url) => browser.history.addUrl({ url }));
   }
-});
+}
+
+function getChannelsUpdatedAt() {
+  const timeString = document.querySelector(`meta[name="channelsUpdatedAt"]`)?.getAttribute("content") ?? "0";
+  try {
+    return parseInt(timeString);
+  } catch (e) {
+    console.error(`Error parsing timestamp`, e);
+    return 0;
+  }
+}

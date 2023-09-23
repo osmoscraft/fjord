@@ -11,9 +11,24 @@ browser.runtime.onInstalled.addListener(handleExtensionInstall);
 browser.runtime.onStartup.addListener(handleBrowserStart);
 (globalThis.self as any as ServiceWorkerGlobalScope).addEventListener("fetch", handleFetchEvent);
 
-function handleExtensionMessage(message: ExtensionMessage) {
+async function handleExtensionMessage(message: ExtensionMessage) {
   if (message.channels) {
     browser.storage.local.set({ channelsCache: message.channels, channelsUpdatedAt: Date.now() });
+  }
+
+  if (message.fetchCacheNewerThan !== undefined) {
+    const { channelsCache, channelsUpdatedAt } = await browser.storage.local.get([
+      "channelsCache",
+      "channelsUpdatedAt",
+    ]);
+    if (!channelsUpdatedAt || !channelsCache) return;
+
+    if (message.fetchCacheNewerThan < channelsUpdatedAt) {
+      console.log(`[worker] UI@${message.fetchCacheNewerThan} | Worker@${channelsUpdatedAt} | Newer cache available`);
+      browser.runtime.sendMessage({ channels: channelsCache } satisfies ExtensionMessage);
+    } else {
+      console.log(`[worker] UI@${message.fetchCacheNewerThan} | Worker@${channelsUpdatedAt} | Cache up to date`);
+    }
   }
 }
 
@@ -33,9 +48,10 @@ function handleFetchEvent(event: FetchEvent) {
   const requestUrl = new URL(event.request.url);
   if (requestUrl.pathname === "/reader.html") {
     const responseAsync = new Promise<Response>(async (resolve) => {
-      const channels = await browser.storage.local
-        .get(["channelsCache"])
-        .then((result) => (result.channelsCache ?? []) as ChannelData[]);
+      const results = await browser.storage.local.get(["channelsCache", "channelsUpdatedAt"]);
+
+      const channelsCache = (results.channelsCache ?? []) as ChannelData[];
+      const channelsUpdatedAt = (results.channelsUpdatedAt ?? 0) as number;
 
       const html = `
 <!DOCTYPE html>
@@ -46,10 +62,11 @@ function handleFetchEvent(event: FetchEvent) {
     <title>Fjord</title>
     <link rel="icon" type="image/svg+xml" href="./images/icon.svg" />
     <link rel="stylesheet" href="./reader.css" />
+    <meta name="channelsUpdatedAt" content="${channelsUpdatedAt}" />
   </head>
   <body>
     ${renderCommandBar()}
-    ${renderChannels(channels)}
+    ${renderChannels(channelsCache)}
     <script type="module" src="./reader.js"></script>
   </body>
 </html>`;
