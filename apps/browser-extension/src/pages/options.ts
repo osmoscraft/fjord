@@ -6,9 +6,36 @@ import "./options.css";
 
 const form = document.querySelector("form")!;
 const textarea = document.querySelector("textarea")!;
+const localUsage = document.querySelector<HTMLMeterElement>("#local-usage")!;
+const syncUsage = document.querySelector<HTMLMeterElement>("#sync-usage")!;
+const localStats = document.querySelector<HTMLSpanElement>("#local-stats")!;
+const syncStats = document.querySelector<HTMLSpanElement>("#sync-stats")!;
 
 textarea.value = getInitalConfig();
 validate();
+
+reportStorageUsage();
+browser.storage.onChanged.addListener(reportStorageUsage);
+
+function reportStorageUsage() {
+  (browser.storage.local as any).getBytesInUse().then((bytes: any) => {
+    localUsage.max = browser.storage.local.QUOTA_BYTES;
+    localUsage.value = bytes;
+    localStats.innerText = `${bytes} / ${browser.storage.local.QUOTA_BYTES} (${(
+      (100 * bytes) /
+      browser.storage.local.QUOTA_BYTES
+    ).toFixed(2)}%)`;
+  });
+
+  (browser.storage.sync as any).getBytesInUse().then((bytes: any) => {
+    syncUsage.max = browser.storage.sync.QUOTA_BYTES;
+    syncUsage.value = bytes;
+    syncStats.innerText = `${bytes} / ${browser.storage.sync.QUOTA_BYTES} (${(
+      (100 * bytes) /
+      browser.storage.sync.QUOTA_BYTES
+    ).toFixed(2)}%)`;
+  });
+}
 
 document.body.addEventListener("click", async (e) => {
   const action = (e.target as HTMLElement)?.closest("[data-action]")?.getAttribute("data-action");

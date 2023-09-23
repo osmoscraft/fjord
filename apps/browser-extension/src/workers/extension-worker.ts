@@ -9,26 +9,11 @@ browser.runtime.onMessage.addListener(handleExtensionMessage);
 browser.runtime.onInstalled.addListener(handleExtensionInstall);
 browser.runtime.onStartup.addListener(handleBrowserStart);
 (globalThis.self as any as ServiceWorkerGlobalScope).addEventListener("fetch", handleFetchEvent);
-browser.storage.local.onChanged.addListener(handleStorageChange);
-
-reportStorageUsage();
 
 function handleExtensionMessage(message: ExtensionMessage) {
   if (message.channels) {
-    browser.storage.local.set({ channelsCache: message.channels });
+    browser.storage.local.set({ channelsCache: message.channels, channelsUpdatedAt: Date.now() });
   }
-}
-
-function handleStorageChange(_changes: Record<string, browser.Storage.StorageChange>) {
-  reportStorageUsage();
-}
-
-function reportStorageUsage() {
-  (browser.storage.local as any)
-    .getBytesInUse()
-    .then((bytes: any) =>
-      console.log(`Storage usage ${((100 * bytes) / browser.storage.local.QUOTA_BYTES).toFixed(2)}%`)
-    );
 }
 
 async function handleExtensionInstall() {
