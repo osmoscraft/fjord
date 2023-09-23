@@ -1,11 +1,13 @@
 :root {
   --page-background: #eee;
-  --command-bar-background: #ddd;
+  --command-bar-background: #bbb;
+  --visited-link-color: #6c6c6c;
 }
 
 @media screen and (prefers-color-scheme: dark) {
   :root {
     --page-background: #1a1a1a;
     --command-bar-background: #333;
+    --visited-link-color: #aaa;
   }
 }

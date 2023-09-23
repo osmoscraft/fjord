@@ -34,14 +34,24 @@ async function handleExtensionMessage(message: ExtensionMessage) {
 
 async function handleExtensionInstall() {
   await setupOffscreenDocument(backgroundPageParameters);
-  const config = await getParsedConfig();
-  browser.runtime.sendMessage({ fetchAll: config } satisfies ExtensionMessage);
+  try {
+    const config = await getParsedConfig();
+    browser.runtime.sendMessage({ fetchAll: config } satisfies ExtensionMessage);
+  } catch (e) {
+    console.log(`Error loading config, opening options`, e);
+    browser.tabs.create({ url: browser.runtime.getURL("options.html") });
+  }
 }
 
 async function handleBrowserStart() {
   await setupOffscreenDocument(backgroundPageParameters);
-  const config = await getParsedConfig();
-  browser.runtime.sendMessage({ fetchAll: config } satisfies ExtensionMessage);
+  try {
+    const config = await getParsedConfig();
+    browser.runtime.sendMessage({ fetchAll: config } satisfies ExtensionMessage);
+  } catch (e) {
+    console.log(`Error loading config, opening options`, e);
+    browser.tabs.create({ url: browser.runtime.getURL("options.html") });
+  }
 }
 
 function handleFetchEvent(event: FetchEvent) {

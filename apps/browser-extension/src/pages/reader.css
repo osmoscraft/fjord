@@ -20,19 +20,17 @@ nav {
   position: sticky;
   top: 0;
   padding: 8px;
-  border-bottom: 1px solid currentColor;
   z-index: 1;
   background-color: var(--command-bar-background);
 }
 
 .c-feeds-menu {
   display: grid;
-  gap: 16px;
+  gap: 24px;
 }
 
 .c-date-view {
   display: grid;
-  padding-block: 4px;
   border: none;
 }
 
@@ -74,13 +72,6 @@ nav {
   }
 }
 
-@media screen and (prefers-color-scheme: dark) {
-  .c-item-title:visited {
-    color: #999;
-  }
-}
-@media screen and (prefers-color-scheme: light) {
-  .c-item-title:visited {
-    color: #6e6e6e;
-  }
+.c-item-title:visited {
+  color: var(--visited-link-color);
 }
