@@ -28,7 +28,10 @@ exampleConfig.value = exampleYaml;
 myConfig.placeholder = placeholderYaml;
 
 reportStorageUsage();
+getValidConfig();
+
 browser.storage.onChanged.addListener(reportStorageUsage);
+browser.storage.sync.onChanged.addListener(handleSyncStorageChange);
 
 function reportStorageUsage() {
   (browser.storage.local as any).getBytesInUse().then((bytes: any) => {
@@ -50,7 +53,17 @@ function reportStorageUsage() {
   });
 }
 
-getValidConfig();
+function handleSyncStorageChange(e: browser.Storage.StorageAreaSyncOnChangedChangesType) {
+  getRawConfig()
+    .then((rawConfig) => {
+      if (rawConfig) {
+        myConfig.value = rawConfig;
+      }
+    })
+    .catch((e) => {
+      console.error(`Error loading config. UI value is stale`, e);
+    });
+}
 
 document.body.addEventListener("click", async (e) => {
   const action = (e.target as HTMLElement)?.closest("[data-action]")?.getAttribute("data-action");
