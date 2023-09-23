@@ -1,6 +1,7 @@
 import browser from "webextension-polyfill";
 import { compressString } from "../modules/compression";
 import exampleYaml from "../modules/config/example.yaml";
+import placeholderYaml from "../modules/config/placeholder.yaml";
 // import { getRawConfig, parseConfig, setRawConfig } from "../modules/config/config";
 import { getRawConfig, parseConfig } from "../modules/config/config";
 import { teardownOffscreenDocument } from "../modules/offscreen";
@@ -13,11 +14,19 @@ const localUsage = document.querySelector<HTMLMeterElement>("#local-usage")!;
 const syncUsage = document.querySelector<HTMLMeterElement>("#sync-usage")!;
 const localStats = document.querySelector<HTMLSpanElement>("#local-stats")!;
 const syncStats = document.querySelector<HTMLSpanElement>("#sync-stats")!;
-const examples = document.querySelector<HTMLDivElement>("#examples-container")!;
+const examplesPanel = document.querySelector<HTMLDivElement>("#examples-container")!;
 const exampleConfig = document.querySelector<HTMLTextAreaElement>("#example-config")!;
 
-getRawConfig().then((value) => (myConfig.value = value));
+getRawConfig()
+  .then((value) => {
+    myConfig.value = value;
+  })
+  .catch((e) => {
+    console.log(`Error loading config`, e);
+    examplesPanel.hidden = false;
+  });
 exampleConfig.value = exampleYaml;
+myConfig.placeholder = placeholderYaml;
 
 reportStorageUsage();
 browser.storage.onChanged.addListener(reportStorageUsage);
@@ -41,6 +50,8 @@ function reportStorageUsage() {
     ).toFixed(2)}%)`;
   });
 }
+
+getValidConfig();
 
 document.body.addEventListener("click", async (e) => {
   const action = (e.target as HTMLElement)?.closest("[data-action]")?.getAttribute("data-action");
@@ -78,7 +89,7 @@ document.body.addEventListener("click", async (e) => {
   }
 
   if (action === "toggle-examples") {
-    examples.hidden = !examples.hidden;
+    examplesPanel.hidden = !examplesPanel.hidden;
   }
 });
 
