@@ -3,3 +3,4 @@ channels:
   - url: https://webkit.org/feed/atom/
   - url: https://hacks.mozilla.org/feed/
   - url: https://blogs.windows.com/msedgedev/feed/
+  - url: https://brave.com/blog/index.xml
