@@ -59,17 +59,12 @@ document.body.addEventListener("click", async (e) => {
     browser.storage.sync.set({ config: compressed });
   }
 
-  if (action === "validate") {
-    validate();
-  }
-
   if (action === "clear") {
     browser.storage.local.clear();
   }
 
   if (action === "example") {
     textarea.value = example;
-    location.reload();
   }
 
   if (action === "reset-background") {
