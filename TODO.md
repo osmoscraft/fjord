@@ -3,3 +3,4 @@
 - Perf: Slow status toggle
 - Perf: Use in-memory cache to manage all read status
 - Feature: Add "fetch" and "manage" button
+- i18n: get locale from background page

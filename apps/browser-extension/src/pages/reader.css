@@ -2,6 +2,22 @@
 @import "../styles/theme.css";
 @import "../styles/override.css";
 
+body {
+  margin: 8px;
+}
+
+menu {
+  padding: 4px;
+
+  & button {
+    padding-inline: 8px;
+  }
+}
+
+menu + nav {
+  margin-top: 4px;
+}
+
 .c-feeds-menu {
   display: grid;
   gap: 16px;
@@ -9,16 +25,18 @@
 
 .c-date-view {
   display: grid;
-  gap: 4px;
   padding-inline: 8px;
   padding-block: 4px;
+  border: none;
 }
 
 .c-date-title {
   font-size: 16px;
+  font-weight: bold;
 }
 
 .c-date-content {
+  margin-top: 8px;
   display: grid;
   gap: 4px;
 }
@@ -47,5 +65,16 @@
 
   &:hover {
     text-decoration: underline;
+  }
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  .c-item-title:visited {
+    color: #999;
+  }
+}
+@media screen and (prefers-color-scheme: light) {
+  .c-item-title:visited {
+    color: #6e6e6e;
   }
 }

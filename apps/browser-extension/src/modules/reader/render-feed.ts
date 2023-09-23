@@ -5,9 +5,9 @@ export function renderChannels(channels: ChannelData[]): string {
     .map((feedByDate) => {
       return `
         <fieldset class="c-date-view">
-          <legend class="c-date-title"><time datetime="${new Date(feedByDate.startDate).toISOString()}">${new Date(
+          <legend class="c-date-title"><time datetime="${feedByDate.startDate}">${renderLocalDate(
         feedByDate.startDate
-      ).toLocaleDateString()}</time></legend>
+      )}</time></legend>
           <div class="c-date-content">
           ${feedByDate.channels
             .map((channel) => {
@@ -29,6 +29,24 @@ export function renderChannels(channels: ChannelData[]): string {
         </fieldset>`;
     })
     .join("")}</nav>`;
+}
+
+/**
+ * Convert the server timestamp to human readable weekday and dates.
+ * Note: the server is responsible for shifting the date based on config file.
+ * The client should parse the date as if it is in UTC timezone.
+ */
+function renderLocalDate(rawDate: number) {
+  const weekday = new Date(rawDate).toLocaleString("en-US", {
+    weekday: "long",
+  });
+
+  const date = new Date(rawDate).toLocaleString("en-US", {
+    month: "numeric",
+    day: "numeric",
+  });
+
+  return `<span class="c-day-of-week">${weekday}<span><span class="c-month-day">${date}</span>`;
 }
 
 interface FeedsByDate {
