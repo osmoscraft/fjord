@@ -1,6 +1,6 @@
 @import "../styles/reset.css";
 @import "../styles/theme.css";
-@import "../styles/override.css";
+@import "../styles/elements.css";
 
 body {
   margin: 8px;

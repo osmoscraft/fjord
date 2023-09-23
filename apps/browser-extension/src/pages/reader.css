@@ -1,6 +1,6 @@
 @import "../styles/reset.css";
 @import "../styles/theme.css";
-@import "../styles/override.css";
+@import "../styles/elements.css";
 
 menu {
   & button {
@@ -22,7 +22,7 @@ nav {
   padding: 8px;
   border-bottom: 1px solid currentColor;
   z-index: 1;
-  background-color: black;
+  background-color: var(--command-bar-background);
 }
 
 .c-feeds-menu {

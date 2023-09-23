@@ -1,2 +1,11 @@
 :root {
+  --page-background: #eee;
+  --command-bar-background: #ddd;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    --page-background: #1a1a1a;
+    --command-bar-background: #333;
+  }
 }

@@ -1,3 +1,10 @@
-dialog {
-  border: 1px solid var(--bg-active);
+html {
+  color-scheme: light dark;
+}
+
+body {
+  font-size: 16px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+    "Helvetica Neue", sans-serif;
+  background-color: var(--page-background);
 }
