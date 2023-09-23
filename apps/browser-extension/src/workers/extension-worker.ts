@@ -31,12 +31,14 @@ function reportStorageUsage() {
     );
 }
 
-function handleExtensionInstall() {
-  return setupOffscreenDocument(backgroundPageParameters);
+async function handleExtensionInstall() {
+  await setupOffscreenDocument(backgroundPageParameters);
+  browser.runtime.sendMessage({ fetchAll: true } satisfies ExtensionMessage);
 }
 
-function handleBrowserStart() {
-  return setupOffscreenDocument(backgroundPageParameters);
+async function handleBrowserStart() {
+  await setupOffscreenDocument(backgroundPageParameters);
+  browser.runtime.sendMessage({ fetchAll: true } satisfies ExtensionMessage);
 }
 
 function handleFetchEvent(event: FetchEvent) {
