@@ -4,6 +4,7 @@ import { setupOffscreenDocument } from "../modules/offscreen";
 import { backgroundPageParameters } from "../modules/parameters";
 import { renderCommandBar } from "../modules/reader/render-command-bar";
 import { renderChannels, type ChannelData } from "../modules/reader/render-feed";
+import { getSensibleAbsoluteTime } from "../modules/time";
 import type { ExtensionMessage } from "../typings/message";
 
 browser.runtime.onMessage.addListener(handleExtensionMessage);
@@ -13,7 +14,8 @@ browser.runtime.onStartup.addListener(handleBrowserStart);
 
 async function handleExtensionMessage(message: ExtensionMessage) {
   if (message.channels) {
-    browser.storage.local.set({ channelsCache: message.channels, channelsUpdatedAt: Date.now() });
+    const now = Date.now();
+    browser.storage.local.set({ channelsCache: message.channels, channelsUpdatedAt: now });
   }
 
   if (message.fetchCacheNewerThan !== undefined) {
@@ -29,6 +31,10 @@ async function handleExtensionMessage(message: ExtensionMessage) {
     } else {
       console.log(`[worker] UI@${message.fetchCacheNewerThan} | Worker@${channelsUpdatedAt} | Cache up to date`);
     }
+
+    browser.runtime.sendMessage({
+      status: `Last updated: ${getSensibleAbsoluteTime(channelsUpdatedAt)}`,
+    } satisfies ExtensionMessage);
   }
 }
 

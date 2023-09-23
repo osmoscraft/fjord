@@ -1,7 +1,9 @@
 :root {
   --page-background: #eee;
-  --command-bar-background: #bbb;
+  --command-bar-background: #ccc;
   --visited-link-color: #6c6c6c;
+  --link-color: #222;
+  --status-text-color: #555;
 }
 
 @media screen and (prefers-color-scheme: dark) {
@@ -9,5 +11,7 @@
     --page-background: #1a1a1a;
     --command-bar-background: #333;
     --visited-link-color: #aaa;
+    --link-color: #eee;
+    --status-text-color: #ccc;
   }
 }

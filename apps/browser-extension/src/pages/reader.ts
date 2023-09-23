@@ -5,7 +5,11 @@ import "./reader.css";
 
 browser.storage.local.onChanged.addListener(() => location.reload());
 browser.runtime.sendMessage({ fetchCacheNewerThan: getChannelsUpdatedAt() } satisfies ExtensionMessage);
+browser.runtime.onMessage.addListener(handleExtensionMessage);
+
 document.body.addEventListener("click", handleClickEvent);
+
+const status = document.querySelector<HTMLSpanElement>("#status")!;
 
 async function handleClickEvent(e: MouseEvent) {
   const action = (e.target as HTMLElement)?.closest("[data-action]")?.getAttribute("data-action");
@@ -62,5 +66,11 @@ function getChannelsUpdatedAt() {
   } catch (e) {
     console.error(`Error parsing timestamp`, e);
     return 0;
+  }
+}
+
+function handleExtensionMessage(e: ExtensionMessage) {
+  if (e.status !== undefined) {
+    status.textContent = e.status;
   }
 }

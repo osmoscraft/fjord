@@ -12,6 +12,7 @@ async function handleExtensionMessage(
 ) {
   if (message.fetchAll) {
     const config = message.fetchAll;
+    browser.runtime.sendMessage({ status: "Fetching..." } satisfies ExtensionMessage);
 
     const results = await Promise.allSettled(
       config.channels.map(async (channel) =>

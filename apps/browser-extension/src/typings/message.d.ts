@@ -6,4 +6,5 @@ export type ExtensionMessage = {
   fetchCacheNewerThan?: number;
   channels?: ChannelData[];
   getChannels?: boolean;
+  status?: string;
 };

@@ -65,7 +65,7 @@ nav {
   font-size: 16px;
   line-height: var(--line-height);
   text-decoration: none;
-  color: inherit;
+  color: var(--link-color);
 
   &:hover {
     text-decoration: underline;
@@ -74,4 +74,11 @@ nav {
 
 .c-item-title:visited {
   color: var(--visited-link-color);
+}
+
+.c-status {
+  color: var(--status-text-color);
+}
+* + .c-status {
+  margin-inline: 8px;
 }
