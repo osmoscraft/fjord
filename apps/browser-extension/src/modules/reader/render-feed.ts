@@ -66,7 +66,8 @@ interface FeedsByDate {
 }
 
 interface FlatItem {
-  date: number;
+  datePublished: number;
+  timePublished: number;
   channel: {
     url: string;
     title: string;
@@ -88,7 +89,8 @@ function groupByDate(channels: ChannelData[]): FeedsByDate[] {
         .filter((item) => item.timePublished > Date.now() - maxAgeInDays * 24 * 60 * 60 * 1000)
         .slice(0, maxItemsPerChannel)
         .map((item) => ({
-          date: getStartOfDayDate(item.timePublished),
+          datePublished: getStartOfDayDate(item.timePublished),
+          timePublished: item.timePublished,
           channel: {
             url: channel.url,
             title: channel.title,
@@ -99,10 +101,11 @@ function groupByDate(channels: ChannelData[]): FeedsByDate[] {
           url: item.url,
         }))
     )
-    .sort((a, b) => b.date - a.date);
+    .sort((a, b) => b.timePublished - a.timePublished);
 
+  // The sorting of items guarantee that the channels and their items are sorted from new to old
   const feedsByDate = flatItems.reduce((acc, item) => {
-    const existingDate = acc.find((group) => group.startDate === item.date);
+    const existingDate = acc.find((group) => group.startDate === item.datePublished);
     if (existingDate) {
       const existingFeed = existingDate.channels.find((channel) => channel.url === item.channel.url);
 
@@ -118,7 +121,7 @@ function groupByDate(channels: ChannelData[]): FeedsByDate[] {
       }
     } else {
       acc.push({
-        startDate: item.date,
+        startDate: item.datePublished,
         channels: [{ title: item.channel.title, url: item.channel.url, homeUrl: item.channel.homeUrl, items: [item] }],
       });
     }

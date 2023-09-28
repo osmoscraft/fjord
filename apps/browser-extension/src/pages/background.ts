@@ -21,14 +21,14 @@ async function handleExtensionMessage(
           .then((xml) => {
             const parsedFeed = parseXmlFeed(xml);
             console.log("[background] parsed", parsedFeed);
-            return parsedFeed;
+            return { ...parsedFeed, url: channel.url } satisfies ChannelData;
           })
           .catch((err) => {
             console.error(`[background] error fetching ${channel.url}`, err);
             throw err;
           })
       )
-    ).then((results) => results.filter(isSuccessfullySettled).map((result) => result.value) as ChannelData[]);
+    ).then((results) => results.filter(isSuccessfullySettled).map((result) => result.value));
 
     browser.runtime.sendMessage({ channels: results } satisfies ExtensionMessage);
   }
