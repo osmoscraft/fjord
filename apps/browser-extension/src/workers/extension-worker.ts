@@ -33,7 +33,12 @@ async function handleExtensionMessage(message: ExtensionMessage) {
       "channelsCache",
       "channelsUpdatedAt",
     ]);
-    if (!channelsUpdatedAt || !channelsCache) return;
+    if (!channelsUpdatedAt || !channelsCache) {
+      console.log(`[worker] Cache does not exist. Fetch all`);
+      const config = await getParsedConfig();
+      browser.runtime.sendMessage({ fetchAll: config } satisfies ExtensionMessage);
+      return;
+    }
 
     if (message.fetchCacheNewerThan < channelsUpdatedAt) {
       console.log(`[worker] UI@${message.fetchCacheNewerThan} | Worker@${channelsUpdatedAt} | Newer cache available`);
