@@ -1,3 +1,2 @@
 - feature: Scan current page for possible feed urls
 - improve: get locale from background page
-- bug: save & read does not auto-fetch after clear feed cache
