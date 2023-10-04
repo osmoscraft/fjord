@@ -52,6 +52,7 @@ nav {
   gap: 8px;
   align-items: start;
   --line-height: 18px;
+  --title-size: 15px;
   --icon-size: 16px;
 }
 
@@ -62,7 +63,7 @@ nav {
 }
 
 .c-item-title {
-  font-size: 16px;
+  font-size: var(--title-size);
   line-height: var(--line-height);
   text-decoration: none;
   color: var(--link-color);
