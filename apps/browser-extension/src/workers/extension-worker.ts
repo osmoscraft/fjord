@@ -7,11 +7,17 @@ import { renderChannels, type ChannelData } from "../modules/reader/render-feed"
 import { getSensibleAbsoluteTime } from "../modules/time";
 import type { ExtensionMessage } from "../typings/message";
 
+browser.action.onClicked.addListener(handleActionClick);
 browser.runtime.onMessage.addListener(handleExtensionMessage);
 browser.runtime.onInstalled.addListener(handleExtensionInstall);
 browser.runtime.onStartup.addListener(handleBrowserStart);
 browser.storage.sync.onChanged.addListener(handleSyncStorageChange);
 (globalThis.self as any as ServiceWorkerGlobalScope).addEventListener("fetch", handleFetchEvent);
+
+function handleActionClick() {
+  const readerPageUrl = new URL(chrome.runtime.getURL("reader.html"));
+  chrome.tabs.create({ url: readerPageUrl.toString() });
+}
 
 function handleSyncStorageChange(e: browser.Storage.StorageAreaSyncOnChangedChangesType) {
   console.log(`[worker] config changed, will refetch`);
