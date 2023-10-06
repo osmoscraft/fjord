@@ -15,16 +15,16 @@ async function handleExtensionMessage(
     browser.runtime.sendMessage({ status: "Fetching..." } satisfies ExtensionMessage);
 
     const results = await Promise.allSettled(
-      config.channels.map(async (channel) =>
-        fetch(channel.url)
+      config.sources.map(async (channel) =>
+        fetch(channel.href)
           .then((res) => res.text())
           .then((xml) => {
             const parsedFeed = parseXmlFeed(xml);
             console.log("[background] parsed", parsedFeed);
-            return { ...parsedFeed, url: channel.url } satisfies ChannelData;
+            return { ...parsedFeed, url: channel.href } satisfies ChannelData;
           })
           .catch((err) => {
-            console.error(`[background] error fetching ${channel.url}`, err);
+            console.error(`[background] error fetching ${channel.href}`, err);
             throw err;
           })
       )

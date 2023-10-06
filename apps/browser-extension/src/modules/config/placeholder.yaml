@@ -1,4 +1,4 @@
-channels:
-  - url: https://website-1.com/feed.xml
-  - url: https://website-2.com/atom.xml
-  - url: https://website-3.com/rss
+sources:
+  - href: https://website-1.com/feed.xml
+  - href: https://website-2.com/atom.xml
+  - href: https://website-3.com/rss

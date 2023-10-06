@@ -1,7 +1,7 @@
 export interface Config {
-  channels: ChannelConfig[];
+  sources: ChannelConfig[];
 }
 
 export interface ChannelConfig {
-  url: string;
+  href: string;
 }
