@@ -1,3 +1,7 @@
+# v0.0.4
+
+- Changed: align with osmosfeed config, use `sources` instead of `channels`, use `href` instead of `url`
+
 # v0.0.3
 
 - Changed: One click to launch reader
