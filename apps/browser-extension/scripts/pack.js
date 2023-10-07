@@ -15,10 +15,8 @@ const dir = process.argv[process.argv.indexOf("--dir") + 1];
 async function pack(dir) {
   console.log("[pack] extension dir", path.resolve(dir));
   const manifest = await readJson(path.resolve(dir, "manifest.json"));
-  const version = manifest.version;
-  const packageName = await readJson("package.json").then((pkg) => pkg.name);
-
-  const outFilename = `${packageName}-${version}.chrome.zip`;
+  const { name, version } = manifest;
+  const outFilename = `${name.toLocaleLowerCase()}-${version}.chrome.zip`;
 
   await execAsync(`zip -r ../${outFilename} .`, { cwd: dir });
 
