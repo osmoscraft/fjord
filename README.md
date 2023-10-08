@@ -1,6 +1,6 @@
 # Fjord
 
-Host-free RSS reader in your browser
+Host-free RSS reader in your browser.
 
 ## Screenshot
 ![image](https://github.com/osmoscraft/fjord/assets/1895289/793ff43a-bdc3-465f-b680-0074f9df3826)
