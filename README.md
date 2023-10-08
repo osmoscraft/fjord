@@ -9,4 +9,4 @@ A serverless RSS reader
 - New content automatically appears on top with date-based grouping
 - Works well with Microsoft Edge split screens
 
-[Get Chrome Extension](https://chrome.google.com/webstore/detail/fjord/kmciijooidgakegflnbnjbnjcimdcfko)
+[Get the Chrome Extension](https://chrome.google.com/webstore/detail/fjord/kmciijooidgakegflnbnjbnjcimdcfko)
