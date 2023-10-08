@@ -25,7 +25,7 @@ After installation, the extension will automatically open options page and promp
 
 ## Ecosystem
 
-Browse other projects from the [osmos::craft](https://osmoscraft.org/) ecosystem. 
+Browse other projects from the [OsmosCraft](https://osmoscraft.org/) ecosystem. 
 
 - Read the web with [Fjord](https://github.com/osmoscraft/fjord)
 - Manage bookmarks with [Memo](https://github.com/osmoscraft/osmosmemo)
