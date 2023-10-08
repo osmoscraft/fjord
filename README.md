@@ -19,6 +19,10 @@ Host-free RSS reader in your browser
 
 [Get the Chrome extension](https://chrome.google.com/webstore/detail/fjord/kmciijooidgakegflnbnjbnjcimdcfko)
 
+## Get started
+
+After installation, the extension will automatically open options page and prompt you for configuration
+
 ## Ecosystem
 
 Browse other projects from the [osmos::craft](https://osmoscraft.org/) ecosystem. 
