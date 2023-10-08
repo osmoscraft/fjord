@@ -17,8 +17,12 @@ Host-free RSS reader in your browser
 
 ## Install
 
-[Get the Chrome Extension](https://chrome.google.com/webstore/detail/fjord/kmciijooidgakegflnbnjbnjcimdcfko)
+[Get the Chrome extension](https://chrome.google.com/webstore/detail/fjord/kmciijooidgakegflnbnjbnjcimdcfko)
 
 ## Ecosystem
 
 Browse other projects from the [osmos::craft](https://osmoscraft.org/) ecosystem. 
+
+- Read the web with [Fjord](https://github.com/osmoscraft/fjord)
+- Manage bookmarks with [Memo](https://github.com/osmoscraft/osmosmemo)
+- Take notes with [Tundra](https://github.com/osmoscraft/tundra)
