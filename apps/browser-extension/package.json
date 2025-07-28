@@ -12,20 +12,21 @@
     "build:assets": "node scripts/copy-assets.js --src public --target dist/unpacked",
     "build:worker": "esbuild src/workers/*.ts  --loader:.html=text --format=esm --bundle --outdir=dist/unpacked",
     "pack": "node scripts/pack.js --dir dist/unpacked",
-    "test": "tsx ./src/index.test.ts"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "type": "module",
   "devDependencies": {
-    "@types/chrome": "^0.0.246",
-    "@types/node": "^20.2.5",
-    "@types/webextension-polyfill": "^0.10.2",
-    "concurrently": "^8.0.1",
-    "esbuild": "^0.19.2",
-    "tsx": "^3.12.7"
+    "@types/chrome": "^0.1.1",
+    "@types/node": "^24.1.0",
+    "@types/webextension-polyfill": "^0.12.3",
+    "concurrently": "^9.2.0",
+    "esbuild": "^0.25.8",
+    "jsdom": "^26.1.0",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
-    "lit-html": "^2.8.0",
-    "webextension-polyfill": "^0.10.0",
-    "yaml": "^2.3.2"
+    "webextension-polyfill": "^0.12.0",
+    "yaml": "^2.8.0"
   }
 }
