@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { parseXmlFeed, rssParser, atomParser } from './parse';
+import { describe, expect, it } from "vitest";
+import { atomParser, parseXmlFeed, rssParser } from "./parse";
 
 // Mock feed data
 const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -65,73 +65,73 @@ const atomXml = `<?xml version="1.0" encoding="UTF-8"?>
   </entry>
 </feed>`;
 
-describe('parseXmlFeed', () => {
-  describe('RSS 2.0 parsing', () => {
-    it('should parse RSS feed correctly', () => {
+describe("parseXmlFeed", () => {
+  describe("RSS 2.0 parsing", () => {
+    it("should parse RSS feed correctly", () => {
       const result = parseXmlFeed(rssXml);
-      
-      expect(result.title).toBe('Example RSS Feed');
-      expect(result.homeUrl).toBe('https://example.com');
+
+      expect(result.title).toBe("Example RSS Feed");
+      expect(result.homeUrl).toBe("https://example.com");
       expect(result.items).toHaveLength(2);
-      
+
       expect(result.items[0]).toEqual({
-        title: 'First Article',
-        url: 'https://example.com/article1',
-        timePublished: new Date('Wed, 27 Jul 2025 10:00:00 GMT').getTime(),
+        title: "First Article",
+        url: "https://example.com/article1",
+        timePublished: new Date("Wed, 27 Jul 2025 10:00:00 GMT").getTime(),
       });
-      
+
       expect(result.items[1]).toEqual({
-        title: 'Second Article',
-        url: 'https://example.com/article2',
-        timePublished: new Date('Tue, 26 Jul 2025 09:00:00 GMT').getTime(),
+        title: "Second Article",
+        url: "https://example.com/article2",
+        timePublished: new Date("Tue, 26 Jul 2025 09:00:00 GMT").getTime(),
       });
     });
   });
 
-  describe('RDF parsing', () => {
-    it('should parse RDF feed correctly', () => {
+  describe("RDF parsing", () => {
+    it("should parse RDF feed correctly", () => {
       const result = parseXmlFeed(rdfXml);
-      
-      expect(result.title).toBe('Example RDF Feed');
-      expect(result.homeUrl).toBe('https://example.com');
+
+      expect(result.title).toBe("Example RDF Feed");
+      expect(result.homeUrl).toBe("https://example.com");
       expect(result.items).toHaveLength(2);
-      
+
       expect(result.items[0]).toEqual({
-        title: 'RDF Article One',
-        url: 'https://example.com/rdf-article1',
-        timePublished: new Date('2025-07-27T10:00:00Z').getTime(),
+        title: "RDF Article One",
+        url: "https://example.com/rdf-article1",
+        timePublished: new Date("2025-07-27T10:00:00Z").getTime(),
       });
-      
+
       expect(result.items[1]).toEqual({
-        title: 'RDF Article Two',
-        url: 'https://example.com/rdf-article2',
-        timePublished: new Date('2025-07-26T09:00:00Z').getTime(),
+        title: "RDF Article Two",
+        url: "https://example.com/rdf-article2",
+        timePublished: new Date("2025-07-26T09:00:00Z").getTime(),
       });
     });
   });
 
-  describe('Atom parsing', () => {
-    it('should parse Atom feed correctly', () => {
+  describe("Atom parsing", () => {
+    it("should parse Atom feed correctly", () => {
       const result = parseXmlFeed(atomXml);
-      
-      expect(result.title).toBe('Example Atom Feed');
-      expect(result.homeUrl).toBe('https://example.com');
+
+      expect(result.title).toBe("Example Atom Feed");
+      expect(result.homeUrl).toBe("https://example.com");
       expect(result.items).toHaveLength(2);
-      
+
       expect(result.items[0]).toEqual({
-        title: 'Atom Article One',
-        url: 'https://example.com/atom-article1',
-        timePublished: new Date('2025-07-27T10:00:00Z').getTime(),
+        title: "Atom Article One",
+        url: "https://example.com/atom-article1",
+        timePublished: new Date("2025-07-27T10:00:00Z").getTime(),
       });
-      
+
       expect(result.items[1]).toEqual({
-        title: 'Atom Article Two',
-        url: 'https://example.com/atom-article2',
-        timePublished: new Date('2025-07-26T09:00:00Z').getTime(),
+        title: "Atom Article Two",
+        url: "https://example.com/atom-article2",
+        timePublished: new Date("2025-07-26T09:00:00Z").getTime(),
       });
     });
 
-    it('should prefer published date over updated date', () => {
+    it("should prefer published date over updated date", () => {
       const atomWithBothDates = `<?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Test Feed</title>
@@ -143,12 +143,12 @@ describe('parseXmlFeed', () => {
     <updated>2025-07-27T10:00:00Z</updated>
   </entry>
 </feed>`;
-      
+
       const result = parseXmlFeed(atomWithBothDates);
-      expect(result.items[0].timePublished).toBe(new Date('2025-07-26T09:00:00Z').getTime());
+      expect(result.items[0].timePublished).toBe(new Date("2025-07-26T09:00:00Z").getTime());
     });
 
-    it('should fallback to updated date when published is missing', () => {
+    it("should fallback to updated date when published is missing", () => {
       const atomWithUpdatedOnly = `<?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Test Feed</title>
@@ -159,23 +159,23 @@ describe('parseXmlFeed', () => {
     <updated>2025-07-27T10:00:00Z</updated>
   </entry>
 </feed>`;
-      
+
       const result = parseXmlFeed(atomWithUpdatedOnly);
-      expect(result.items[0].timePublished).toBe(new Date('2025-07-27T10:00:00Z').getTime());
+      expect(result.items[0].timePublished).toBe(new Date("2025-07-27T10:00:00Z").getTime());
     });
   });
 
-  describe('error handling', () => {
-    it('should throw error for unsupported feed format', () => {
+  describe("error handling", () => {
+    it("should throw error for unsupported feed format", () => {
       const invalidXml = `<?xml version="1.0"?>
 <unsupported>
   <item>test</item>
 </unsupported>`;
-      
-      expect(() => parseXmlFeed(invalidXml)).toThrow('No parser found');
+
+      expect(() => parseXmlFeed(invalidXml)).toThrow("No parser found");
     });
 
-    it('should filter out items without title or url', () => {
+    it("should filter out items without title or url", () => {
       const rssWithIncompleteItems = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
@@ -193,13 +193,13 @@ describe('parseXmlFeed', () => {
     </item>
   </channel>
 </rss>`;
-      
+
       const result = parseXmlFeed(rssWithIncompleteItems);
       expect(result.items).toHaveLength(1);
-      expect(result.items[0].title).toBe('Complete Article');
+      expect(result.items[0].title).toBe("Complete Article");
     });
 
-    it('should handle malformed dates gracefully', () => {
+    it("should handle malformed dates gracefully", () => {
       const rssWithBadDate = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
@@ -212,9 +212,9 @@ describe('parseXmlFeed', () => {
     </item>
   </channel>
 </rss>`;
-      
+
       const result = parseXmlFeed(rssWithBadDate);
-      expect(result.items[0].timePublished).toBeTypeOf('number');
+      expect(result.items[0].timePublished).toBeTypeOf("number");
       // For invalid dates, new Date().getTime() returns NaN, which is what we expect
       // The current implementation doesn't handle this case, so we test the actual behavior
       expect(Number.isNaN(result.items[0].timePublished)).toBe(true);
@@ -222,19 +222,19 @@ describe('parseXmlFeed', () => {
   });
 });
 
-describe('rssParser', () => {
-  it('should identify RSS format correctly', () => {
+describe("rssParser", () => {
+  it("should identify RSS format correctly", () => {
     const parser = new DOMParser();
-    const rssDoc = parser.parseFromString(rssXml, 'application/xml');
-    const rdfDoc = parser.parseFromString(rdfXml, 'application/xml');
-    const atomDoc = parser.parseFromString(atomXml, 'application/xml');
-    
+    const rssDoc = parser.parseFromString(rssXml, "application/xml");
+    const rdfDoc = parser.parseFromString(rdfXml, "application/xml");
+    const atomDoc = parser.parseFromString(atomXml, "application/xml");
+
     expect(rssParser.isMatch(rssDoc)).toBe(true);
     expect(rssParser.isMatch(rdfDoc)).toBe(true);
     expect(rssParser.isMatch(atomDoc)).toBe(false);
   });
 
-  it('should handle RSS without channel link', () => {
+  it("should handle RSS without channel link", () => {
     const rssWithoutLink = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
@@ -242,42 +242,148 @@ describe('rssParser', () => {
     <description>This feed has no link</description>
   </channel>
 </rss>`;
-    
+
     const result = parseXmlFeed(rssWithoutLink);
     expect(result.homeUrl).toBeUndefined();
   });
+
+  it("should handle relative URLs in RSS entries by converting them to absolute URLs", () => {
+    const rssWithRelativeUrls = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>RSS with Relative URLs</title>
+    <link>https://example.com</link>
+    <description>Testing relative URL resolution in RSS</description>
+    <item>
+      <title>Relative URL Article</title>
+      <link>/blog/relative-article.html</link>
+      <pubDate>Wed, 27 Jul 2025 10:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Absolute URL Article</title>
+      <link>https://example.com/blog/absolute-article.html</link>
+      <pubDate>Tue, 26 Jul 2025 09:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>`;
+
+    const result = parseXmlFeed(rssWithRelativeUrls);
+    expect(result.title).toBe("RSS with Relative URLs");
+    expect(result.homeUrl).toBe("https://example.com");
+    expect(result.items).toHaveLength(2);
+
+    // Relative URL should be converted to absolute
+    expect(result.items[0]).toEqual({
+      title: "Relative URL Article",
+      url: "https://example.com/blog/relative-article.html",
+      timePublished: new Date("Wed, 27 Jul 2025 10:00:00 GMT").getTime(),
+    });
+
+    // Absolute URL should remain unchanged
+    expect(result.items[1]).toEqual({
+      title: "Absolute URL Article",
+      url: "https://example.com/blog/absolute-article.html",
+      timePublished: new Date("Tue, 26 Jul 2025 09:00:00 GMT").getTime(),
+    });
+  });
+
+  it("should leave relative URLs unchanged in RSS when no base URL is available", () => {
+    const rssWithoutBaseUrl = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>RSS without Base URL</title>
+    <description>No link element in channel</description>
+    <item>
+      <title>Test Article</title>
+      <link>/relative-path.html</link>
+      <pubDate>Wed, 27 Jul 2025 10:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>`;
+
+    const result = parseXmlFeed(rssWithoutBaseUrl);
+    expect(result.homeUrl).toBeUndefined();
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0].url).toBe("/relative-path.html");
+  });
 });
 
-describe('atomParser', () => {
-  it('should identify Atom format correctly', () => {
+describe("atomParser", () => {
+  it("should identify Atom format correctly", () => {
     const parser = new DOMParser();
-    const atomDoc = parser.parseFromString(atomXml, 'application/xml');
-    const rssDoc = parser.parseFromString(rssXml, 'application/xml');
-    
+    const atomDoc = parser.parseFromString(atomXml, "application/xml");
+    const rssDoc = parser.parseFromString(rssXml, "application/xml");
+
     expect(atomParser.isMatch(atomDoc)).toBe(true);
     expect(atomParser.isMatch(rssDoc)).toBe(false);
   });
 
-  it('should ignore self-referencing links', () => {
+  it("should ignore self-referencing links", () => {
     const atomWithSelfLink = `<?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Self Link Test</title>
   <link rel="self" href="https://example.com/feed.xml" />
   <link href="https://example.com" />
 </feed>`;
-    
+
     const result = parseXmlFeed(atomWithSelfLink);
-    expect(result.homeUrl).toBe('https://example.com');
+    expect(result.homeUrl).toBe("https://example.com");
   });
 
-  it('should handle Atom without non-self links', () => {
+  it("should handle Atom without non-self links", () => {
     const atomSelfOnly = `<?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Self Only Feed</title>
   <link rel="self" href="https://example.com/feed.xml" />
 </feed>`;
-    
+
     const result = parseXmlFeed(atomSelfOnly);
     expect(result.homeUrl).toBeUndefined();
+  });
+
+  it("should handle relative URLs in Atom entries by converting them to absolute URLs", () => {
+    const atomWithRelativeUrls = `<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Geoffrey Litt</title>
+  <id>http://geoffreylitt.com/</id>
+  <link href="http://geoffreylitt.com/"/>
+  <link href="http://geoffreylitt.com/feed.xml" rel="self"/>
+  <updated>2025-07-27T20:50:00+00:00</updated>
+  <entry>
+    <title>Enough AI copilots! We need AI HUDs</title>
+    <link rel="alternate" href="/2025/07/27/enough-ai-copilots-we-need-ai-huds.html"/>
+    <id>/2025/07/27/enough-ai-copilots-we-need-ai-huds.html</id>
+    <published>2025-07-27T20:50:00+00:00</published>
+    <updated>2025-07-27T20:50:00+00:00</updated>
+  </entry>
+</feed>`;
+
+    const result = parseXmlFeed(atomWithRelativeUrls);
+    expect(result.title).toBe("Geoffrey Litt");
+    expect(result.homeUrl).toBe("http://geoffreylitt.com/");
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0]).toEqual({
+      title: "Enough AI copilots! We need AI HUDs",
+      url: "http://geoffreylitt.com/2025/07/27/enough-ai-copilots-we-need-ai-huds.html",
+      timePublished: new Date("2025-07-27T20:50:00+00:00").getTime(),
+    });
+  });
+
+  it("should leave relative URLs unchanged when no base URL is available", () => {
+    const atomWithoutBaseUrl = `<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>No Base URL Feed</title>
+  <updated>2025-07-27T20:50:00+00:00</updated>
+  <entry>
+    <title>Test Article</title>
+    <link rel="alternate" href="/relative-path.html"/>
+    <published>2025-07-27T20:50:00+00:00</published>
+  </entry>
+</feed>`;
+
+    const result = parseXmlFeed(atomWithoutBaseUrl);
+    expect(result.homeUrl).toBeUndefined();
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0].url).toBe("/relative-path.html");
   });
 });

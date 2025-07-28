@@ -13,9 +13,10 @@ export function parseXmlFeed(xml: string): FeedChannel {
   const { selectChannel, resolveChannel, selectItems, resolveItem } = parser;
 
   const channelElement = selectChannel(dom);
+  const channel = resolveChannel(channelElement);
 
   return {
-    ...resolveChannel(channelElement),
+    ...channel,
     items: [...selectItems(dom)].map(resolveItem).filter(isArticle),
   };
 }
@@ -39,8 +40,18 @@ export const rssParser = {
     const decodedTitle = parseChildByTagName(item, "title")?.text();
     const date = itemChildren.find((node) => ["pubDate", "dc:date"].includes(node.tagName))?.textContent?.trim() ?? "";
 
+    const rawUrl = itemChildren.find((node) => node.tagName === "link")?.textContent?.trim();
+
+    // Get the base URL from the parent channel element
+    const channelElement = item.closest("channel");
+    const channelChildren = channelElement ? [...channelElement.children] : [];
+    const baseUrl = channelChildren.find((node) => node.tagName === "link")?.textContent;
+
+    // Convert relative URLs to absolute URLs using the utility function
+    const resolvedUrl = rawUrl && baseUrl ? resolveToAbsoluteUrl(rawUrl, baseUrl) : rawUrl;
+
     return {
-      url: itemChildren.find((node) => node.tagName === "link")?.textContent?.trim() ?? undefined,
+      url: resolvedUrl ?? undefined,
       title: decodedTitle,
       timePublished: coerceError(() => new Date(date ?? "").getTime(), Date.now()),
     };
@@ -70,12 +81,23 @@ export const atomParser = {
     const publishedDate = itemChildren.find((node) => node.tagName === "published")?.textContent;
     const modifedDate = itemChildren.find((node) => node.tagName === "updated")?.textContent;
 
+    const rawUrl = itemChildren
+      .find((node) => node.tagName === "link")
+      ?.getAttribute("href")
+      ?.trim();
+
+    // Get the base URL from the parent feed element
+    const feedElement = item.closest("feed");
+    const feedChildren = feedElement ? [...feedElement.children] : [];
+    const baseUrl = feedChildren
+      .find((node) => node.tagName === "link" && node.getAttribute("rel") !== "self")
+      ?.getAttribute("href");
+
+    // Convert relative URLs to absolute URLs using the utility function
+    const resolvedUrl = rawUrl && baseUrl ? resolveToAbsoluteUrl(rawUrl, baseUrl) : rawUrl;
+
     return {
-      url:
-        itemChildren
-          .find((node) => node.tagName === "link")
-          ?.getAttribute("href")
-          ?.trim() ?? undefined,
+      url: resolvedUrl ?? undefined,
       title: decodedTitle ?? undefined,
       timePublished: coerceError(() => new Date(publishedDate ?? modifedDate ?? "").getTime(), Date.now()),
     };
@@ -145,5 +167,20 @@ function coerceError<T, K>(fn: () => T, coerceTo: K) {
     return fn();
   } catch {
     return coerceTo;
+  }
+}
+
+function resolveToAbsoluteUrl(maybeRelative: string, rootUrl: string): string {
+  // If URL is already absolute or empty, return as-is
+  if (!maybeRelative || !maybeRelative.startsWith("/")) {
+    return maybeRelative;
+  }
+
+  try {
+    const baseUrlObj = new URL(rootUrl);
+    return new URL(maybeRelative, baseUrlObj.origin).toString();
+  } catch {
+    // If URL construction fails, fallback to the original URL
+    return maybeRelative;
   }
 }
