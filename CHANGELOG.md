@@ -1,3 +1,9 @@
+# v0.0.6
+
+- Fixed: Relative URLs in feed item would crash the parser
+- Chore: Added unit test
+- Chore: Dependency updates
+
 # v0.0.5
 
 - Chore: Update Chrome Web Store description
