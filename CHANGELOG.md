@@ -1,3 +1,7 @@
+# v0.0.7
+
+- Fixed: Example config contains invalid feed URL
+
 # v0.0.6
 
 - Fixed: Relative URLs in feed item would crash the parser
