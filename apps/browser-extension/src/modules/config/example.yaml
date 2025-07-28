@@ -1,6 +1,6 @@
 sources:
-  - href: https://developer.chrome.com/feeds/blog.xml
+  - href: https://developer.chrome.com/static/blog/feed.xml
   - href: https://webkit.org/feed/atom/
   - href: https://hacks.mozilla.org/feed/
   - href: https://blogs.windows.com/msedgedev/feed/
-  - href: https://brave.com/blog/index.xml
+  - href: https://developer.apple.com/news/rss/news.rss
